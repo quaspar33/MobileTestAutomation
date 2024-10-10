@@ -47,23 +47,45 @@ public class Database {
         }
     }
 
-    public void query(String query) {
+    public String query(String query) {
         if (connection == null) {
             System.err.println("Połączenie nie zostało nawiązane. Użyj connect() przed wykonywaniem zapytań.");
-            return;
+            return null;
         }
+
+        StringBuilder output = new StringBuilder();
 
         try (Statement statement = connection.createStatement();
              ResultSet resultSet = statement.executeQuery(query)) {
-
             while (resultSet.next()) {
-                System.out.println("ID: " + resultSet.getInt("id"));
-                System.out.println("Nazwa: " + resultSet.getString("nazwa"));
-            }
+                int id = resultSet.getInt("id");
+                String nazwa = resultSet.getString("nazwa");
 
+                output.append("ID: ").append(id).append(", Nazwa: ").append(nazwa).append("\n");
+            }
         } catch (SQLException e) {
             System.err.println("Błąd podczas wykonywania zapytania: " + e.getMessage());
             e.printStackTrace();
         }
+
+        return output.toString();
+    }
+
+    public int executeUpdate(String query) {
+        if (connection == null) {
+            System.err.println("Połączenie nie zostało nawiązane. Użyj connect() przed wykonywaniem zapytań.");
+            return -1;
+        }
+
+        int rowsAffected = 0;
+
+        try (Statement statement = connection.createStatement()) {
+            rowsAffected = statement.executeUpdate(query);
+        } catch (SQLException e) {
+            System.err.println("Błąd podczas wykonywania zapytania modyfikującego dane: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        return rowsAffected;
     }
 }
