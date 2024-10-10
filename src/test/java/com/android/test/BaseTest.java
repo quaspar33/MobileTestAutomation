@@ -36,12 +36,6 @@ public class BaseTest {
 
         driver = new AndroidDriver(new URL("http://127.0.0.1:4723"), capabilities);
 
-        try {
-            Thread.sleep(10000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
         String filePath = "/Users/kacperziebacz/Desktop/AutomationTests/patch.txt";
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, false))) {
             writer.write(patch);
@@ -51,12 +45,12 @@ public class BaseTest {
         }
     }
 
-    @AfterMethod
-    public void tearDown() {
-        if (driver != null) {
-            driver.quit();
-        }
-    }
+//    @AfterMethod
+//    public void tearDown() {
+//        if (driver != null) {
+//            driver.quit();
+//        }
+//    }
 
     protected void databaseSetup() {
         ObjectMapper objectMapper = new ObjectMapper();
