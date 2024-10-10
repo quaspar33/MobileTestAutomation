@@ -18,7 +18,7 @@ public class Database {
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = null;
         try {
-            jsonNode = objectMapper.readTree(new File("cred.json"));
+            jsonNode = objectMapper.readTree(new File("src/test/java/com/android/test/cred.json"));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -59,9 +59,9 @@ public class Database {
              ResultSet resultSet = statement.executeQuery(query)) {
             while (resultSet.next()) {
                 int id = resultSet.getInt("id");
-                String nazwa = resultSet.getString("nazwa");
+                String login = resultSet.getString("login");
 
-                output.append("ID: ").append(id).append(", Nazwa: ").append(nazwa).append("\n");
+                output.append("ID: ").append(id).append(", Login: ").append(login).append("\n");
             }
         } catch (SQLException e) {
             System.err.println("Błąd podczas wykonywania zapytania: " + e.getMessage());

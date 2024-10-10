@@ -13,6 +13,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Random;
 
 public class BaseTest {
     protected AndroidDriver driver;
@@ -61,7 +62,7 @@ public class BaseTest {
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = null;
         try {
-            jsonNode = objectMapper.readTree(new File("cred.json"));
+            jsonNode = objectMapper.readTree(new File("src/test/java/com/android/test/login.json"));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -75,10 +76,24 @@ public class BaseTest {
         System.out.println(checkDatabaseLogin);
 
         if (checkDatabaseLogin != null && !checkDatabaseLogin.isEmpty()) {
-            int rowsAffected = database.executeUpdate("delete from tikrow_qa.user where login like '" + login + "'");
+            String newLogin = login + generateRandomString();
+            int rowsAffected = database.executeUpdate("update tikrow_qa.user set login = '" + newLogin + "' where login like '" + login + "'");
             System.out.println("Zmodyfikowano wiersze w liczbie: " + rowsAffected);
         }
 
         database.disconnect();
+    }
+
+    protected String generateRandomString() {
+        String letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+        Random random = new Random();
+        StringBuilder result = new StringBuilder(3);
+
+        for (int i = 0; i < 3; i++) {
+            int index = random.nextInt(letters.length());
+            result.append(letters.charAt(index));
+        }
+
+        return result.toString();
     }
 }
