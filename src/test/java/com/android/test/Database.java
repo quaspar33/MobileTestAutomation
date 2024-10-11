@@ -47,7 +47,7 @@ public class Database {
         }
     }
 
-    public String query(String query) {
+    public String queryForLogin(String query) {
         if (connection == null) {
             System.err.println("Połączenie nie zostało nawiązane. Użyj connect() przed wykonywaniem zapytań.");
             return null;
@@ -71,6 +71,25 @@ public class Database {
         return output.toString();
     }
 
+    public ResultSet queryForTempPassword(String query) {
+        if (connection == null) {
+            System.err.println("Połączenie nie zostało nawiązane. Użyj connect() przed wykonywaniem zapytań.");
+            return null;
+        }
+
+        ResultSet outputResultSet = null;
+
+        try (Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery(query)) {
+            outputResultSet = resultSet;
+        } catch (SQLException e) {
+            System.err.println("Błąd podczas wykonywania zapytania: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        return outputResultSet;
+    }
+
     public int executeUpdate(String query) {
         if (connection == null) {
             System.err.println("Połączenie nie zostało nawiązane. Użyj connect() przed wykonywaniem zapytań.");
@@ -89,3 +108,4 @@ public class Database {
         return rowsAffected;
     }
 }
+

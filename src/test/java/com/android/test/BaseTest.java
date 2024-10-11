@@ -5,21 +5,21 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.remote.MobileCapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.sql.Timestamp;
 import java.util.Random;
 
 public class BaseTest {
     protected AndroidDriver driver;
     protected Database database;
+    protected static Timestamp startTestTime;
 
-    @BeforeMethod
     public void setupApp() throws MalformedURLException {
         databaseSetup();
 
@@ -45,12 +45,11 @@ public class BaseTest {
         }
     }
 
-//    @AfterMethod
-//    public void tearDown() {
-//        if (driver != null) {
-//            driver.quit();
-//        }
-//    }
+    public void tearDown() {
+        if (driver != null) {
+            driver.quit();
+        }
+    }
 
     protected void databaseSetup() {
         ObjectMapper objectMapper = new ObjectMapper();
@@ -65,7 +64,7 @@ public class BaseTest {
         database = new Database();
         database.connect();
 
-        String checkDatabaseLogin = database.query("select * from tikrow_qa.user where login like '" + login + "'");
+        String checkDatabaseLogin = database.queryForLogin("select * from tikrow_qa.user where login like '" + login + "'");
 
         System.out.println(checkDatabaseLogin);
 
@@ -89,5 +88,9 @@ public class BaseTest {
         }
 
         return result.toString();
+    }
+
+    public static Timestamp getStartTestTime() {
+        return startTestTime;
     }
 }
