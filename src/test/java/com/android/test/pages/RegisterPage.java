@@ -59,4 +59,8 @@ public class RegisterPage {
     public void clickCreateAccountButton() {
         createAccountButton.click();
     }
+
+    public void clickComebackButton() {
+        comebackButton.click();
+    }
 }

@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.remote.MobileCapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
+import org.testng.annotations.AfterSuite;
+import org.testng.annotations.BeforeMethod;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -15,11 +17,12 @@ import java.net.URL;
 import java.sql.Timestamp;
 import java.util.Random;
 
-public class BaseTest {
+public class AppSetup {
     protected AndroidDriver driver;
     protected Database database;
     protected static Timestamp startTestTime;
 
+    @BeforeMethod
     public void setupApp() throws MalformedURLException {
         databaseSetup();
 
@@ -45,6 +48,7 @@ public class BaseTest {
         }
     }
 
+    @AfterSuite
     public void tearDown() {
         if (driver != null) {
             driver.quit();

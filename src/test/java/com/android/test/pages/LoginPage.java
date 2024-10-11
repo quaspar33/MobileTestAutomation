@@ -1,16 +1,17 @@
 package com.android.test.pages;
 
-import com.android.test.BaseTest;
 import com.android.test.Database;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.pagefactory.AndroidFindBy;
 import io.appium.java_client.pagefactory.AppiumFieldDecorator;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
+import java.time.Duration;
 
 public class LoginPage {
     private AndroidDriver driver;
@@ -32,45 +33,25 @@ public class LoginPage {
     private WebElement loginButton;
 
     public void enterPhoneNumber() {
-        phoneNumberField.clear();
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        wait.until(ExpectedConditions.visibilityOf(phoneNumberField));
         phoneNumberField.sendKeys("503168221");
     }
 
     public void enterPassword() {
-        passwordField.clear();
         database.connect();
+        ResultSet output = database.queryForTempPassword("SELECT * FROM tikrow_qa.notificationsSmsHistory ORDER BY sendDate DESC LIMIT 1");
+
         String password = null;
-        boolean conditionsMet = false;
-        ResultSet output;
-        int count = 0;
-
-        while (!conditionsMet || count == 9) {
-            output = database.queryForTempPassword("SELECT * FROM tikrow_qa.notificationsSmsHistory ORDER BY sendDate DESC LIMIT 10");
-            try {
-                String number = output.getString("number");
-                Timestamp sendDate = output.getTimestamp("sendDate");
-                String text = output.getString("text");
-
-                if (number.equals("48503168221") && !sendDate.before(BaseTest.getStartTestTime())) {
-                    conditionsMet = true;
-                    password = text.replace("Czesc! Twoje haslo do Tikrow to: ", "");
-                } else {
-                    count++;
-                }
-
-            } catch (SQLException e) {
-                e.printStackTrace();
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException ie) {
-                    Thread.currentThread().interrupt();
-                }
-            }
+        try {
+            password = output.getString("text").replace("Czesc! Twoje haslo do Tikrow to: ", "");
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
 
+        database.disconnect();
         passwordField.sendKeys(password);
     }
-
 
     public void clickLoginButton() {
         loginButton.click();
