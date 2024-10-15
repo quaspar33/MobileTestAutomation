@@ -57,8 +57,9 @@ public class Database {
             while (resultSet.next()) {
                 String password = resultSet.getString("text");
                 String sendDate = resultSet.getString("sendDate");
+                String number = resultSet.getString("number");
 
-                output.append(password).append(";").append(sendDate);
+                output.append(password).append(";").append(sendDate).append(";").append(number);
             }
         } catch (SQLException e) {
             e.printStackTrace();

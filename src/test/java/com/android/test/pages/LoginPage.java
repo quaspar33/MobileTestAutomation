@@ -47,7 +47,10 @@ public class LoginPage {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         wait.until(driver -> {
             queryForTempPassword.set(database.queryForTempPassword("SELECT * FROM tikrow_qa.notificationsSmsHistory ORDER BY sendDate DESC LIMIT 1"));
-            return LocalDateTime.parse(queryForTempPassword.get().split(";")[1], dateFormatter).isAfter(registerTime);
+            String[] tempParts = queryForTempPassword.get().split(";");
+            String tempDate = tempParts[1];
+            String tempNumber = tempParts[2];
+            return LocalDateTime.parse(tempDate, dateFormatter).isAfter(registerTime) && tempNumber.equals("48503168221");
         });
 
         String[] parts = queryForTempPassword.get().split(";");

@@ -68,6 +68,5 @@ public class RegisterPage {
 
     public void clickComebackButton() {
         comebackButton.click();
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
     }
 }
