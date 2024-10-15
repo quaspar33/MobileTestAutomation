@@ -1,6 +1,6 @@
 package com.android.test.tests;
 
-import com.android.test.AppSetup;
+import com.android.test.BaseTest;
 import com.android.test.pages.LoginPage;
 import com.android.test.pages.RegisterPage;
 import org.testng.annotations.BeforeMethod;
@@ -8,7 +8,7 @@ import org.testng.annotations.Test;
 
 import java.net.MalformedURLException;
 
-public class PartnerProcessTest extends AppSetup {
+public class PartnerProcessTest extends BaseTest {
     private RegisterPage registerPage;
     private LoginPage loginPage;
 

@@ -42,7 +42,7 @@ public class LoginPage {
         database.connect();
         ResultSet output = database.queryForTempPassword("SELECT * FROM tikrow_qa.notificationsSmsHistory ORDER BY sendDate DESC LIMIT 1");
 
-        String password = null;
+        String password;
         try {
             password = output.getString("text").replace("Czesc! Twoje haslo do Tikrow to: ", "");
         } catch (SQLException e) {

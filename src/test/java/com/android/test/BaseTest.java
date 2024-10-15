@@ -17,7 +17,7 @@ import java.net.URL;
 import java.sql.Timestamp;
 import java.util.Random;
 
-public class AppSetup {
+public class BaseTest {
     protected AndroidDriver driver;
     protected Database database;
     protected static Timestamp startTestTime;
