@@ -1,26 +1,24 @@
 package com.android.test;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.remote.MobileCapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
-import org.testng.annotations.AfterSuite;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Random;
 
 public class BaseTest {
-    protected AndroidDriver driver;
-    protected Database database;
-    protected static Timestamp startTestTime;
+    public AndroidDriver driver;
+    private Database database;
+    private JsonHandler jsonHandler;
+    private LocalDateTime registerTime;
 
     @BeforeMethod
     public void setupApp() throws MalformedURLException {
@@ -48,7 +46,7 @@ public class BaseTest {
         }
     }
 
-    @AfterSuite
+    @AfterMethod
     public void tearDown() {
         if (driver != null) {
             driver.quit();
@@ -56,16 +54,9 @@ public class BaseTest {
     }
 
     protected void databaseSetup() {
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode jsonNode = null;
-        try {
-            jsonNode = objectMapper.readTree(new File("src/test/java/com/android/test/login.json"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        assert jsonNode != null;
-        String login = jsonNode.get("login").asText();
+        jsonHandler = new JsonHandler("src/test/java/com/android/test/login.json");
         database = new Database();
+        String login = jsonHandler.getStrFromJson("login");
         database.connect();
 
         String checkDatabaseLogin = database.queryForLogin("select * from tikrow_qa.user where login like '" + login + "'");
@@ -94,7 +85,11 @@ public class BaseTest {
         return result.toString();
     }
 
-    public static Timestamp getStartTestTime() {
-        return startTestTime;
+    public void setRegisterTime(LocalDateTime registerTime) {
+        this.registerTime = registerTime;
+    }
+
+    public LocalDateTime getRegisterTime() {
+        return registerTime;
     }
 }

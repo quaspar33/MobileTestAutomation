@@ -1,37 +1,21 @@
 package com.android.test;
 
-import java.io.File;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 public class Database {
-    private Connection connection = null;
+    private Connection connection;
+    private JsonHandler jsonHandler;
 
     public void connect() {
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode jsonNode = null;
-        try {
-            jsonNode = objectMapper.readTree(new File("src/test/java/com/android/test/cred.json"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        assert jsonNode != null;
-        String jdbcUrl = jsonNode.get("jdbcUrl").asText();
-        String username = jsonNode.get("username").asText();
-        String password = jsonNode.get("password").asText();
+        jsonHandler = new JsonHandler("src/test/java/com/android/test/cred.json");
+        String jdbcUrl = jsonHandler.getStrFromJson("jdbcUrl");
+        String username = jsonHandler.getStrFromJson("username");
+        String password = jsonHandler.getStrFromJson("password");
 
         try {
             connection = DriverManager.getConnection(jdbcUrl, username, password);
             System.out.println("Połączenie z bazą danych nawiązane!");
         } catch (SQLException e) {
-            System.err.println("Błąd podczas łączenia z bazą danych: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -42,17 +26,12 @@ public class Database {
                 connection.close();
                 System.out.println("Połączenie z bazą danych zamknięte.");
             } catch (SQLException e) {
-                System.err.println("Błąd podczas zamykania połączenia: " + e.getMessage());
+                e.printStackTrace();
             }
         }
     }
 
     public String queryForLogin(String query) {
-        if (connection == null) {
-            System.err.println("Połączenie nie zostało nawiązane. Użyj connect() przed wykonywaniem zapytań.");
-            return null;
-        }
-
         StringBuilder output = new StringBuilder();
 
         try (Statement statement = connection.createStatement();
@@ -61,47 +40,39 @@ public class Database {
                 int id = resultSet.getInt("id");
                 String login = resultSet.getString("login");
 
-                output.append("ID: ").append(id).append(", Login: ").append(login).append("\n");
+                output.append("id: ").append(id).append(", login: ").append(login).append("\n");
             }
         } catch (SQLException e) {
-            System.err.println("Błąd podczas wykonywania zapytania: " + e.getMessage());
             e.printStackTrace();
         }
 
         return output.toString();
     }
 
-    public ResultSet queryForTempPassword(String query) {
-        if (connection == null) {
-            System.err.println("Połączenie nie zostało nawiązane. Użyj connect() przed wykonywaniem zapytań.");
-            return null;
-        }
-
-        ResultSet outputResultSet = null;
+    public String queryForTempPassword(String query) {
+        StringBuilder output = new StringBuilder();
 
         try (Statement statement = connection.createStatement();
              ResultSet resultSet = statement.executeQuery(query)) {
-            outputResultSet = resultSet;
+            while (resultSet.next()) {
+                String password = resultSet.getString("text");
+                String sendDate = resultSet.getString("sendDate");
+
+                output.append(password).append(";").append(sendDate);
+            }
         } catch (SQLException e) {
-            System.err.println("Błąd podczas wykonywania zapytania: " + e.getMessage());
             e.printStackTrace();
         }
 
-        return outputResultSet;
+        return output.toString();
     }
 
     public int executeUpdate(String query) {
-        if (connection == null) {
-            System.err.println("Połączenie nie zostało nawiązane. Użyj connect() przed wykonywaniem zapytań.");
-            return -1;
-        }
-
         int rowsAffected = 0;
 
         try (Statement statement = connection.createStatement()) {
             rowsAffected = statement.executeUpdate(query);
         } catch (SQLException e) {
-            System.err.println("Błąd podczas wykonywania zapytania modyfikującego dane: " + e.getMessage());
             e.printStackTrace();
         }
 

@@ -1,5 +1,6 @@
 package com.android.test.pages;
 
+import com.android.test.JsonHandler;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.pagefactory.AndroidFindBy;
 import io.appium.java_client.pagefactory.AppiumFieldDecorator;
@@ -9,13 +10,17 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
+import java.time.format.DateTimeFormatter;
 
 public class RegisterPage {
     private AndroidDriver driver;
+    private JsonHandler jsonHandler;
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     public RegisterPage(AndroidDriver driver) {
         this.driver = driver;
         PageFactory.initElements(new AppiumFieldDecorator(driver), this);
+        jsonHandler = new JsonHandler("src/test/java/com/android/test/login.json");
     }
 
     @AndroidFindBy(uiAutomator = "new UiSelector().text(\"Załóż konto\")")
@@ -43,13 +48,14 @@ public class RegisterPage {
     }
 
     public void enterPhoneNumber() {
+        System.out.println("Rozpoczynam test rejestracji");
         phoneNumberField.clear();
-        phoneNumberField.sendKeys("503168221");
+        phoneNumberField.sendKeys(jsonHandler.getStrFromJson("login"));
     }
 
     public void enterPostalCode() {
         postalCodeField.clear();
-        postalCodeField.sendKeys("05-825");
+        postalCodeField.sendKeys(jsonHandler.getStrFromJson("postalCode"));
     }
 
     public void clickAgreementCheckbox() {
@@ -62,5 +68,6 @@ public class RegisterPage {
 
     public void clickComebackButton() {
         comebackButton.click();
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
     }
 }

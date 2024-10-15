@@ -7,6 +7,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.net.MalformedURLException;
+import java.time.LocalDateTime;
 
 public class PartnerProcessTest extends BaseTest {
     private RegisterPage registerPage;
@@ -21,19 +22,16 @@ public class PartnerProcessTest extends BaseTest {
     }
 
     @Test
-    public void testRegister() {
+    public void test() {
         registerPage.clickRegisterButton();
         registerPage.enterPhoneNumber();
         registerPage.enterPostalCode();
         registerPage.clickAgreementCheckbox();
         registerPage.clickCreateAccountButton();
+        setRegisterTime(LocalDateTime.now());
         registerPage.clickComebackButton();
-    }
-
-    @Test(dependsOnMethods = {"testRegister"})
-    public void testLogin() {
         loginPage.enterPhoneNumber();
-        loginPage.enterPassword();
+        loginPage.enterPassword(getRegisterTime());
         loginPage.clickLoginButton();
     }
 }
