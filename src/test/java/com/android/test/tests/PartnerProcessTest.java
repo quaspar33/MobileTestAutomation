@@ -2,6 +2,7 @@ package com.android.test.tests;
 
 import com.android.test.BaseTest;
 import com.android.test.pages.LoginPage;
+import com.android.test.pages.QuestionnaireFirstPage;
 import com.android.test.pages.RegisterPage;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -12,6 +13,7 @@ import java.time.LocalDateTime;
 public class PartnerProcessTest extends BaseTest {
     private RegisterPage registerPage;
     private LoginPage loginPage;
+    private QuestionnaireFirstPage questionnaireFirstPage;
 
     @BeforeMethod
     @Override
@@ -19,6 +21,7 @@ public class PartnerProcessTest extends BaseTest {
         super.setupApp();
         registerPage = new RegisterPage(driver);
         loginPage = new LoginPage(driver);
+        questionnaireFirstPage = new QuestionnaireFirstPage(driver);
     }
 
     @Test
@@ -33,5 +36,7 @@ public class PartnerProcessTest extends BaseTest {
         loginPage.enterPhoneNumber();
         loginPage.enterPassword(getRegisterTime());
         loginPage.clickLoginButton();
+        questionnaireFirstPage.clickFillQuestionnaire();
+        questionnaireFirstPage.enterBirthDate();
     }
 }

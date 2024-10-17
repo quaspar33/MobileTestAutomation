@@ -13,7 +13,6 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
@@ -23,7 +22,6 @@ public class LoginPage {
     private Database database;
     DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     private JsonHandler jsonHandler;
-    private String phoneNumber;
 
     public LoginPage(AndroidDriver driver) {
         this.driver = driver;
@@ -50,6 +48,8 @@ public class LoginPage {
 
     public void enterPassword(LocalDateTime registerTime) {
         database.connect();
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(1));
+
         AtomicReference<List<String>> queryForTempPassword = new AtomicReference<>(new ArrayList<>());
         AtomicReference<String> passwordRef = new AtomicReference<>("");
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
@@ -67,27 +67,21 @@ public class LoginPage {
                 String tempDate = tempParts[1];
                 String tempNumber = tempParts[2];
 
-                try {
-                    LocalDateTime parsedDate = LocalDateTime.parse(tempDate, dateFormatter);
-                    if (parsedDate.isAfter(registerTime) && tempNumber.equals("48".concat(jsonHandler.getStrFromJson("login")))) {
-                        passwordRef.set(tempParts[0].replace("Czesc! Twoje haslo do Tikrow to: ", ""));
-                        System.out.println("Match found!");
-                        return true;
-                    }
-                } catch (DateTimeParseException e) {
-                    System.out.println("Error parsing date: " + e.getMessage());
+                LocalDateTime parsedDate = LocalDateTime.parse(tempDate, dateFormatter);
+                if (parsedDate.isAfter(registerTime) && tempNumber.equals("48".concat(jsonHandler.getStrFromJson("login")))) {
+                    passwordRef.set(tempParts[0].replace("Czesc! Twoje haslo do Tikrow to: ", ""));
+                    System.out.println("Znaleziono dopasowanie!");
+                    return true;
                 }
             }
 
-            System.out.println("No matching result found.");
+            System.out.println("Nie udało się znaleźć dopasowania.");
             return false;
         });
 
         database.disconnect();
         passwordField.sendKeys(passwordRef.get());
     }
-
-
 
     public void clickLoginButton() {
         loginButton.click();

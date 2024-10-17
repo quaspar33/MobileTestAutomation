@@ -8,13 +8,13 @@ import org.testng.annotations.BeforeMethod;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.LocalDateTime;
-import java.util.Random;
 
 public class BaseTest {
     public AndroidDriver driver;
     private Database database;
     private JsonHandler jsonHandler;
     private LocalDateTime registerTime;
+    private Services services;
 
     @BeforeMethod
     public void setupApp() throws MalformedURLException {
@@ -41,6 +41,7 @@ public class BaseTest {
     private void databaseSetup() {
         jsonHandler = new JsonHandler("src/test/java/com/android/test/login.json");
         database = new Database();
+        services = new Services();
         String login = jsonHandler.getStrFromJson("login");
         database.connect();
 
@@ -49,25 +50,12 @@ public class BaseTest {
         System.out.println(checkDatabaseLogin);
 
         if (checkDatabaseLogin != null && !checkDatabaseLogin.isEmpty()) {
-            String newLogin = login + generateRandomString();
+            String newLogin = login + services.generateRandomString(3, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789");
             int rowsAffected = database.executeUpdate("update tikrow_qa.user set login = '" + newLogin + "' where login like '" + login + "'");
             System.out.println("Zmodyfikowano wiersze w liczbie: " + rowsAffected);
         }
 
         database.disconnect();
-    }
-
-    private String generateRandomString() {
-        String letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-        Random random = new Random();
-        StringBuilder result = new StringBuilder(3);
-
-        for (int i = 0; i < 3; i++) {
-            int index = random.nextInt(letters.length());
-            result.append(letters.charAt(index));
-        }
-
-        return result.toString();
     }
 
     public void setRegisterTime(LocalDateTime registerTime) {
