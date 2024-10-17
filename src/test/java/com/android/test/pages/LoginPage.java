@@ -1,6 +1,7 @@
 package com.android.test.pages;
 
 import com.android.test.Database;
+import com.android.test.JsonHandler;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.pagefactory.AndroidFindBy;
 import io.appium.java_client.pagefactory.AppiumFieldDecorator;
@@ -12,17 +13,23 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class LoginPage {
     private AndroidDriver driver;
     private Database database;
     DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    private JsonHandler jsonHandler;
+    private String phoneNumber;
 
     public LoginPage(AndroidDriver driver) {
         this.driver = driver;
         PageFactory.initElements(new AppiumFieldDecorator(driver), this);
         database = new Database();
+        jsonHandler = new JsonHandler("src/test/java/com/android/test/login.json");
     }
 
     @AndroidFindBy(uiAutomator = "new UiSelector().text(\"Numer telefonu\")")
@@ -35,33 +42,55 @@ public class LoginPage {
     private WebElement loginButton;
 
     public void enterPhoneNumber() {
-        System.out.println("Rozpoczynam test logowania");
+        System.out.println("Rozpoczynam test logowania!");
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         wait.until(ExpectedConditions.visibilityOf(phoneNumberField));
-        phoneNumberField.sendKeys("503168221");
+        phoneNumberField.sendKeys(jsonHandler.getStrFromJson("login"));
     }
 
     public void enterPassword(LocalDateTime registerTime) {
         database.connect();
-        AtomicReference<String> queryForTempPassword = new AtomicReference<>("");
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        AtomicReference<List<String>> queryForTempPassword = new AtomicReference<>(new ArrayList<>());
+        AtomicReference<String> passwordRef = new AtomicReference<>("");
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
+        System.out.println("time: " + registerTime.toString());
+
         wait.until(driver -> {
-            queryForTempPassword.set(database.queryForTempPassword("SELECT * FROM tikrow_qa.notificationsSmsHistory ORDER BY sendDate DESC LIMIT 1"));
-            String[] tempParts = queryForTempPassword.get().split(";");
-            String tempDate = tempParts[1];
-            String tempNumber = tempParts[2];
-            return LocalDateTime.parse(tempDate, dateFormatter).isAfter(registerTime) && tempNumber.equals("48503168221");
+            queryForTempPassword.set(database.queryForTempPassword("SELECT * FROM tikrow_qa.notificationsSmsHistory ORDER BY sendDate DESC LIMIT 5"));
+            List<String> tempList = queryForTempPassword.get();
+
+            for (String s : tempList) {
+                System.out.println("Query result: " + s);
+                String[] tempParts = s.split(";");
+                if (tempParts.length < 3) continue;
+
+                String tempDate = tempParts[1];
+                String tempNumber = tempParts[2];
+
+                try {
+                    LocalDateTime parsedDate = LocalDateTime.parse(tempDate, dateFormatter);
+                    if (parsedDate.isAfter(registerTime) && tempNumber.equals("48".concat(jsonHandler.getStrFromJson("login")))) {
+                        passwordRef.set(tempParts[0].replace("Czesc! Twoje haslo do Tikrow to: ", ""));
+                        System.out.println("Match found!");
+                        return true;
+                    }
+                } catch (DateTimeParseException e) {
+                    System.out.println("Error parsing date: " + e.getMessage());
+                }
+            }
+
+            System.out.println("No matching result found.");
+            return false;
         });
 
-        String[] parts = queryForTempPassword.get().split(";");
-
-        String password = parts[0].replace("Czesc! Twoje haslo do Tikrow to: ", "");
-
         database.disconnect();
-        passwordField.sendKeys(password);
+        passwordField.sendKeys(passwordRef.get());
     }
+
+
 
     public void clickLoginButton() {
         loginButton.click();
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(6));
     }
 }

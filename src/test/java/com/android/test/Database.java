@@ -1,6 +1,8 @@
 package com.android.test;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Database {
     private Connection connection;
@@ -49,8 +51,9 @@ public class Database {
         return output.toString();
     }
 
-    public String queryForTempPassword(String query) {
-        StringBuilder output = new StringBuilder();
+    public List<String> queryForTempPassword(String query) {
+        List<String> output = new ArrayList<>();
+        StringBuilder sb = new StringBuilder();
 
         try (Statement statement = connection.createStatement();
              ResultSet resultSet = statement.executeQuery(query)) {
@@ -59,13 +62,14 @@ public class Database {
                 String sendDate = resultSet.getString("sendDate");
                 String number = resultSet.getString("number");
 
-                output.append(password).append(";").append(sendDate).append(";").append(number);
+                sb.append(password).append(";").append(sendDate).append(";").append(number);
+                output.add(sb.toString());
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        return output.toString();
+        return output;
     }
 
     public int executeUpdate(String query) {

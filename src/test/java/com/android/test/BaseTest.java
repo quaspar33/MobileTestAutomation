@@ -11,7 +11,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Random;
 
@@ -47,13 +46,12 @@ public class BaseTest {
         }
     }
 
-    @AfterMethod
-    public void tearDown() {
-        if (driver != null) {
-            driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(6));
-            driver.quit();
-        }
-    }
+//    @AfterMethod
+//    public void tearDown() {
+//        if (driver != null) {
+//            driver.quit();
+//        }
+//    }
 
     private void databaseSetup() {
         jsonHandler = new JsonHandler("src/test/java/com/android/test/login.json");

@@ -48,7 +48,7 @@ public class RegisterPage {
     }
 
     public void enterPhoneNumber() {
-        System.out.println("Rozpoczynam test rejestracji");
+        System.out.println("Rozpoczynam test rejestracji!");
         phoneNumberField.clear();
         phoneNumberField.sendKeys(jsonHandler.getStrFromJson("login"));
     }
