@@ -3,20 +3,20 @@ package com.android.test;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.remote.MobileCapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
-import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.*;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.LocalDateTime;
 
 public class BaseTest {
-    public AndroidDriver driver;
+    public static AndroidDriver driver;
     private Database database;
     private JsonHandler jsonHandler;
-    private LocalDateTime registerTime;
+    private static LocalDateTime registerTime;
     private Services services;
 
-    @BeforeMethod
+    @BeforeSuite
     public void setupApp() throws MalformedURLException {
         databaseSetup();
 
@@ -31,12 +31,12 @@ public class BaseTest {
         driver = new AndroidDriver(new URL("http://127.0.0.1:4723"), capabilities);
     }
 
-//    @AfterMethod
-//    public void tearDown() {
-//        if (driver != null) {
-//            driver.quit();
-//        }
-//    }
+    @AfterSuite
+    public void tearDown() {
+        if (driver != null) {
+            driver.quit();
+        }
+    }
 
     private void databaseSetup() {
         jsonHandler = new JsonHandler("src/test/java/com/android/test/login.json");
@@ -58,11 +58,11 @@ public class BaseTest {
         database.disconnect();
     }
 
-    public void setRegisterTime(LocalDateTime registerTime) {
-        this.registerTime = registerTime;
+    public static void setRegisterTime(LocalDateTime registerTime) {
+        BaseTest.registerTime = registerTime;
     }
 
-    public LocalDateTime getRegisterTime() {
+    public static LocalDateTime getRegisterTime() {
         return registerTime;
     }
 }

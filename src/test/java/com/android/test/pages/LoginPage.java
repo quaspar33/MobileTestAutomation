@@ -56,7 +56,7 @@ public class LoginPage {
 
         AtomicReference<List<String>> queryForTempPassword = new AtomicReference<>(new ArrayList<>());
         AtomicReference<String> passwordRef = new AtomicReference<>("");
-        System.out.println("time: " + registerTime.toString());
+        System.out.println("Czas zakończenia testu rejestracji:: " + registerTime.toString());
 
         boolean passwordFound = false;
         int maxAttempts = 20;

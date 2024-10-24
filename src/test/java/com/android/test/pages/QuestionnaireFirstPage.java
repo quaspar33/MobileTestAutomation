@@ -106,7 +106,7 @@ public class QuestionnaireFirstPage {
             wait.until(ExpectedConditions.visibilityOf(yearPicker));
             actions.moveToElement(yearPicker)
                     .clickAndHold()
-                    .moveByOffset(0, 150)
+                    .moveByOffset(0, 120)
                     .release()
                     .perform();
         }
@@ -122,7 +122,7 @@ public class QuestionnaireFirstPage {
     }
 
     public void enterPesel() {
-        String generatedPesel = services.generatePesel(LocalDate.of(currentYear, currentDay, currentMonth), 'm');
+        String generatedPesel = services.generatePesel(LocalDate.of(currentYear, currentMonth, currentDay), 'm');
         System.out.printf("Wygenerowano pesel dla daty {} {} {}: {}%n", currentYear, currentDay, currentMonth, generatedPesel);
         pesel.sendKeys(generatedPesel);
     }
