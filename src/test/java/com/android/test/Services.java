@@ -41,8 +41,7 @@ public class Services {
 
     private int generateSerialNumber(char gender) {
         int start = (gender == 'M' || gender == 'm') ? 1 : 0;
-        int serial = random.nextInt(500) * 10 + start;
-        return serial;
+        return random.nextInt(500) * 10 + start;
     }
 
     private char calculateChecksum(String peselWithoutChecksum) {
@@ -54,7 +53,7 @@ public class Services {
         }
 
         int remainder = sum % 10;
-        int checksum = (10 - remainder) % 10; // Suma kontrolna
+        int checksum = (10 - remainder) % 10;
 
         return (char) (checksum + '0');
     }
@@ -68,7 +67,7 @@ public class Services {
 
         String checkDigits = calculateIbanChecksum("PL00" + accountNumber);
 
-        return "PL" + checkDigits + accountNumber;
+        return checkDigits + accountNumber;
     }
 
     private String calculateIbanChecksum(String ibanWithoutChecksum) {

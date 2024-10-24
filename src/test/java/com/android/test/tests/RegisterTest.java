@@ -19,12 +19,12 @@ public class RegisterTest {
     }
 
     @Test(groups = "register")
-    public void test() {
+    public void registerTest() {
+        BaseTest.setRegisterTime(LocalDateTime.now());
         registerPage.clickRegisterButton();
         registerPage.enterPhoneNumber();
         registerPage.enterPostalCode();
         registerPage.clickAgreementCheckbox();
         registerPage.clickCreateAccountButton();
-        BaseTest.setRegisterTime(LocalDateTime.now());
     }
 }

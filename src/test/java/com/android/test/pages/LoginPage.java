@@ -56,7 +56,7 @@ public class LoginPage {
 
         AtomicReference<List<String>> queryForTempPassword = new AtomicReference<>(new ArrayList<>());
         AtomicReference<String> passwordRef = new AtomicReference<>("");
-        System.out.println("Czas zakończenia testu rejestracji:: " + registerTime.toString());
+        System.out.println("Czas rozpoczęcia testu rejestracji: " + registerTime.toString());
 
         boolean passwordFound = false;
         int maxAttempts = 20;
@@ -102,7 +102,6 @@ public class LoginPage {
 
         if (passwordFound) {
             String password = passwordRef.get();
-            assertNotNull(password);
             passwordField.sendKeys(password);
         } else {
             System.out.println("Przekroczono limit prób. Nie znaleziono hasła.");

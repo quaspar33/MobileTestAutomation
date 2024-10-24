@@ -9,7 +9,7 @@ public class Database {
     private JsonHandler jsonHandler;
 
     public void connect() {
-        jsonHandler = new JsonHandler("src/test/java/com/android/test/cred.json");
+        jsonHandler = new JsonHandler("src/test/java/com/android/test/database.json");
         String jdbcUrl = jsonHandler.getStrFromJson("jdbcUrl");
         String username = jsonHandler.getStrFromJson("username");
         String password = jsonHandler.getStrFromJson("password");

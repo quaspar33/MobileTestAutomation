@@ -17,12 +17,19 @@ public class QuestionnaireFirstTest {
     }
 
     @Test(groups = "questionnaireFirst", dependsOnGroups = "login")
-    public void test() {
+    public void questionnaireFirstTest() {
         questionnaireFirstPage.clickFillQuestionnaire();
         questionnaireFirstPage.enterBirthDate();
         questionnaireFirstPage.enterCountry();
         questionnaireFirstPage.enterPesel();
         questionnaireFirstPage.enterName();
         questionnaireFirstPage.enterSurname();
+        questionnaireFirstPage.enterEmail();
+        questionnaireFirstPage.enterPhoneNumber();
+        questionnaireFirstPage.enterTaxOffice();
+        questionnaireFirstPage.enterBankNumber();
+        questionnaireFirstPage.enterAddress();
+        questionnaireFirstPage.setYesCheckbox();
+        questionnaireFirstPage.enterNextPage();
     }
 }

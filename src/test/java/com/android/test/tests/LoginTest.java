@@ -17,7 +17,7 @@ public class LoginTest {
     }
 
     @Test(groups = "login", dependsOnGroups = "register")
-    public void test() {
+    public void loginTest() {
         loginPage.enterPhoneNumber();
         loginPage.enterPassword(BaseTest.getRegisterTime());
         loginPage.clickLoginButton();
