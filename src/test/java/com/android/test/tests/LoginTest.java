@@ -1,18 +1,18 @@
 package com.android.test.tests;
 
+import com.android.test.AbstractTest;
 import com.android.test.BaseTest;
 import com.android.test.pages.LoginPage;
-import io.appium.java_client.android.AndroidDriver;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-public class LoginTest {
-    private AndroidDriver driver;
+public class LoginTest extends AbstractTest {
     private LoginPage loginPage;
 
     @BeforeClass
+    @Override
     public void beforeClass() {
-        driver = BaseTest.driver;
+        super.beforeClass();
         loginPage = new LoginPage(driver);
     }
 

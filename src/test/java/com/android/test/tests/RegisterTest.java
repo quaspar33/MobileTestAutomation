@@ -1,20 +1,20 @@
 package com.android.test.tests;
 
+import com.android.test.AbstractTest;
 import com.android.test.BaseTest;
 import com.android.test.pages.RegisterPage;
-import io.appium.java_client.android.AndroidDriver;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.time.LocalDateTime;
 
-public class RegisterTest {
+public class RegisterTest extends AbstractTest {
     private RegisterPage registerPage;
-    private AndroidDriver driver;
 
     @BeforeClass
+    @Override
     public void beforeClass() {
-        driver = BaseTest.driver;
+        super.beforeClass();
         registerPage = new RegisterPage(driver);
     }
 
