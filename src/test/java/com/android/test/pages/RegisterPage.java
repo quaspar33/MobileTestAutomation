@@ -1,5 +1,6 @@
 package com.android.test.pages;
 
+import com.android.test.AbstractPage;
 import com.android.test.JsonHandler;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.pagefactory.AndroidFindBy;
@@ -12,15 +13,12 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.time.Duration;
 import java.time.format.DateTimeFormatter;
 
-public class RegisterPage {
-    private AndroidDriver driver;
+public class RegisterPage extends AbstractPage {
     private JsonHandler jsonHandler;
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     public RegisterPage(AndroidDriver driver) {
-        this.driver = driver;
-        PageFactory.initElements(new AppiumFieldDecorator(driver), this);
-        jsonHandler = new JsonHandler("src/test/java/com/android/test/login.json");
+        super(driver);
+        jsonHandler = new JsonHandler("register.json");
     }
 
     @AndroidFindBy(uiAutomator = "new UiSelector().text(\"Załóż konto\")")

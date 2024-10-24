@@ -13,7 +13,7 @@ public class JsonHandler {
     public JsonHandler(String path) {
         this.objectMapper = new ObjectMapper();
         try {
-            this.jsonNode = objectMapper.readTree(new File(path));
+            this.jsonNode = objectMapper.readTree(new File("src/test/java/com/android/test/" + path));
         } catch (IOException e) {
             e.printStackTrace();
         }

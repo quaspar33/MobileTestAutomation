@@ -1,5 +1,6 @@
 package com.android.test.pages;
 
+import com.android.test.AbstractPage;
 import com.android.test.JsonHandler;
 import com.android.test.Services;
 import io.appium.java_client.android.AndroidDriver;
@@ -18,26 +19,17 @@ import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 
-public class QuestionnaireFirstPage {
-    private AndroidDriver driver;
-    WebDriverWait wait;
+public class QuestionnaireFirstPage extends AbstractPage {
+    private JsonHandler jsonHandler;
     private int currentMonth;
     private int currentDay;
     private int currentYear;
-    private Services services;
-    private JsonHandler jsonHandler;
-    Actions actions;
 
 
     public QuestionnaireFirstPage(AndroidDriver driver) {
-        this.driver = driver;
-        wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-        actions = new Actions(driver);
-        services = new Services();
-        jsonHandler = new JsonHandler("src/test/java/com/android/test/questionnaire_first.json");
-        PageFactory.initElements(new AppiumFieldDecorator(driver), this);
+        super(driver);
+        jsonHandler = new JsonHandler("questionnaire_first.json");
         LocalDate currentDate = LocalDate.now();
-        DateTimeFormatter monthFormatter = DateTimeFormatter.ofPattern("MM");
         currentMonth = currentDate.getMonthValue();
         currentDay = currentDate.getDayOfMonth();
         currentYear = currentDate.getYear();

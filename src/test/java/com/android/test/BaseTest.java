@@ -39,7 +39,7 @@ public class BaseTest {
     }
 
     private void databaseSetup() {
-        jsonHandler = new JsonHandler("src/test/java/com/android/test/login.json");
+        jsonHandler = new JsonHandler("base.json");
         database = new Database();
         services = new Services();
         String login = jsonHandler.getStrFromJson("login");

@@ -1,5 +1,6 @@
 package com.android.test.pages;
 
+import com.android.test.AbstractPage;
 import com.android.test.Database;
 import com.android.test.JsonHandler;
 import io.appium.java_client.android.AndroidDriver;
@@ -20,17 +21,12 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static org.testng.Assert.assertNotNull;
 
-public class LoginPage {
-    private AndroidDriver driver;
-    private Database database;
-    DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+public class LoginPage extends AbstractPage {
     private JsonHandler jsonHandler;
 
     public LoginPage(AndroidDriver driver) {
-        this.driver = driver;
-        PageFactory.initElements(new AppiumFieldDecorator(driver), this);
-        database = new Database();
-        jsonHandler = new JsonHandler("src/test/java/com/android/test/login.json");
+        super(driver);
+        jsonHandler = new JsonHandler("login.json");
     }
 
     @AndroidFindBy(uiAutomator = "new UiSelector().text(\"Numer telefonu\")")
@@ -46,7 +42,7 @@ public class LoginPage {
         System.out.println("Rozpoczynam test logowania!");
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
         wait.until(ExpectedConditions.visibilityOf(phoneNumberField));
-        String login = jsonHandler.getStrFromJson("login");
+        String login = jsonHandler.getStrFromJson("phoneNumber");
         assertNotNull(login);
         phoneNumberField.sendKeys(login);
     }
@@ -75,8 +71,8 @@ public class LoginPage {
                 String tempNumber = tempParts[2];
 
                 try {
-                    LocalDateTime parsedDate = LocalDateTime.parse(tempDate, dateFormatter);
-                    if (parsedDate.isAfter(registerTime) && tempNumber.equals("48".concat(jsonHandler.getStrFromJson("login")))) {
+                    LocalDateTime parsedDate = LocalDateTime.parse(tempDate, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+                    if (parsedDate.isAfter(registerTime) && tempNumber.equals("48".concat(jsonHandler.getStrFromJson("phoneNumber")))) {
                         passwordRef.set(tempParts[0].replace("Czesc! Twoje haslo do Tikrow to: ", ""));
                         System.out.println("Znaleziono dopasowanie!");
                         passwordFound = true;
