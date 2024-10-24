@@ -3,7 +3,6 @@ package com.android.test;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 
 public class Services {
 
@@ -21,15 +20,15 @@ public class Services {
     public String generatePesel(LocalDate birthDate, char gender) {
         StringBuilder pesel = new StringBuilder();
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyMMdd");
         int year = birthDate.getYear();
         int month = birthDate.getMonthValue();
+        int day = birthDate.getDayOfMonth();
 
         if (year >= 2000) {
             month += 20;
         }
 
-        pesel.append(String.format("%02d%02d%02d", year % 100, month, birthDate.getDayOfMonth()));
+        pesel.append(String.format("%02d%02d%02d", year % 100, month, day));
 
         int serialNumber = generateSerialNumber(gender);
         pesel.append(String.format("%03d", serialNumber));
@@ -48,7 +47,7 @@ public class Services {
         int[] weights = {1, 3, 7, 9, 1, 3, 7, 9, 1, 3};
         int sum = 0;
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < peselWithoutChecksum.length(); i++) {
             sum += Character.getNumericValue(peselWithoutChecksum.charAt(i)) * weights[i];
         }
 

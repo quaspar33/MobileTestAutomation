@@ -76,7 +76,7 @@ public class QuestionnaireFirstPage {
     @AndroidFindBy(uiAutomator = "new UiSelector().text(\"123456789\")")
     private WebElement phoneNumber;
 
-    @AndroidFindBy(uiAutomator = "new UiSelector().className(\"android.widget.EditText\").instance(3)")
+    @AndroidFindBy(uiAutomator = "new UiSelector().className(\"android.widget.EditText\").instance(6)")
     private WebElement taxOffice;
 
     @AndroidFindBy(uiAutomator = "new UiSelector().text(\"Urząd Skarbowy Poznań-Wilda 61-558, Dolna Wilda 80\").instance(0)")
@@ -85,10 +85,10 @@ public class QuestionnaireFirstPage {
     @AndroidFindBy(uiAutomator = "new UiSelector().text(\"Nr rachunku bankowego\")")
     private WebElement bankNumber;
 
-    @AndroidFindBy(uiAutomator = "new UiSelector().className(\"android.widget.EditText\").instance(4)")
+    @AndroidFindBy(uiAutomator = "new UiSelector().className(\"android.widget.EditText\").instance(5)")
     private WebElement postalCode;
 
-    @AndroidFindBy(uiAutomator = "new UiSelector().className(\"android.widget.EditText\").instance(5)")
+    @AndroidFindBy(uiAutomator = "new UiSelector().className(\"android.widget.EditText\").instance(6)")
     private WebElement cityName;
 
     @AndroidFindBy(uiAutomator = "new UiSelector().className(\"android.widget.EditText\").instance(6)")
@@ -165,6 +165,7 @@ public class QuestionnaireFirstPage {
     }
 
     public void enterTaxOffice() {
+        wait.until(ExpectedConditions.visibilityOf(taxOffice));
         taxOffice.click();
         wait.until(ExpectedConditions.visibilityOf(taxOfficeName));
         taxOfficeName.click();
