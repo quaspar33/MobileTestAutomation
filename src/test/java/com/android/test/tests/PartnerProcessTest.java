@@ -32,11 +32,14 @@ public class PartnerProcessTest extends BaseTest {
         registerPage.clickAgreementCheckbox();
         registerPage.clickCreateAccountButton();
         setRegisterTime(LocalDateTime.now());
-        registerPage.clickComebackButton();
         loginPage.enterPhoneNumber();
         loginPage.enterPassword(getRegisterTime());
         loginPage.clickLoginButton();
         questionnaireFirstPage.clickFillQuestionnaire();
         questionnaireFirstPage.enterBirthDate();
+        questionnaireFirstPage.enterCountry();
+        questionnaireFirstPage.enterPesel();
+        questionnaireFirstPage.enterName();
+        questionnaireFirstPage.enterSurname();
     }
 }

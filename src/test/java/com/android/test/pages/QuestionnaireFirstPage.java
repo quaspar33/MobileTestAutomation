@@ -1,5 +1,6 @@
 package com.android.test.pages;
 
+import com.android.test.Services;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.pagefactory.AndroidFindBy;
 import io.appium.java_client.pagefactory.AppiumFieldDecorator;
@@ -17,17 +18,20 @@ import java.time.format.DateTimeFormatter;
 public class QuestionnaireFirstPage {
     private AndroidDriver driver;
     WebDriverWait wait;
-    private String currentMonth;
+    private int currentMonth;
     private int currentDay;
     private int currentYear;
+    private Services services;
+
 
     public QuestionnaireFirstPage(AndroidDriver driver) {
         this.driver = driver;
         wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        services = new Services();
         PageFactory.initElements(new AppiumFieldDecorator(driver), this);
         LocalDate currentDate = LocalDate.now();
-        DateTimeFormatter monthFormatter = DateTimeFormatter.ofPattern("MMM");
-        currentMonth = currentDate.format(monthFormatter);
+        DateTimeFormatter monthFormatter = DateTimeFormatter.ofPattern("MM");
+        currentMonth = currentDate.getMonthValue();
         currentDay = currentDate.getDayOfMonth();
         currentYear = currentDate.getYear();
     }
@@ -43,6 +47,9 @@ public class QuestionnaireFirstPage {
 
     @AndroidFindBy(uiAutomator = "new UiSelector().text(\"Obywatelstwo\")")
     private WebElement country;
+
+    @AndroidFindBy(uiAutomator = "new UiSelector().description(\"Polska\")")
+    private WebElement polska;
 
     @AndroidFindBy(uiAutomator = "new UiSelector().text(\"PESEL\")")
     private WebElement pesel;
@@ -92,15 +99,39 @@ public class QuestionnaireFirstPage {
     public void enterBirthDate() {
         wait.until(ExpectedConditions.visibilityOf(birthDate));
         birthDate.click();
-        WebElement yearPicker = driver.findElement(By.xpath("//android.widget.EditText[@resource-id=\"android:id/numberpicker_input\" and @text=\"" + currentYear + "\"]"));
-        wait.until(ExpectedConditions.visibilityOf(yearPicker));
         Actions actions = new Actions(driver);
-        actions.moveToElement(yearPicker)
-                .clickAndHold()
-                .moveByOffset(0, 100*40)
-                .release()
-                .perform();
+        WebElement yearPicker;
+        for (int i = 0; i < 20; i++) {
+            yearPicker = driver.findElement(By.xpath("//android.widget.EditText[@resource-id=\"android:id/numberpicker_input\" and @text=\"" + (currentYear - i) + "\"]"));
+            wait.until(ExpectedConditions.visibilityOf(yearPicker));
+            actions.moveToElement(yearPicker)
+                    .clickAndHold()
+                    .moveByOffset(0, 150)
+                    .release()
+                    .perform();
+        }
         birthDateOkButton.click();
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+    }
+
+    public void enterCountry() {
+        wait.until(ExpectedConditions.visibilityOf(country));
+        country.click();
+        wait.until(ExpectedConditions.visibilityOf(polska));
+        polska.click();
+    }
+
+    public void enterPesel() {
+        String generatedPesel = services.generatePesel(LocalDate.of(currentYear, currentDay, currentMonth), 'm');
+        System.out.printf("Wygenerowano pesel dla daty {} {} {}: {}%n", currentYear, currentDay, currentMonth, generatedPesel);
+        pesel.sendKeys(generatedPesel);
+    }
+
+    public void enterName() {
+        name.sendKeys("Java");
+    }
+
+    public void enterSurname() {
+        surname.sendKeys("Appium");
     }
 }

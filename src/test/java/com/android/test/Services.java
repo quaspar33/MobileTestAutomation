@@ -1,5 +1,6 @@
 package com.android.test;
 
+import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -21,7 +22,14 @@ public class Services {
         StringBuilder pesel = new StringBuilder();
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyMMdd");
-        pesel.append(birthDate.format(formatter));
+        int year = birthDate.getYear();
+        int month = birthDate.getMonthValue();
+
+        if (year >= 2000) {
+            month += 20;
+        }
+
+        pesel.append(String.format("%02d%02d%02d", year % 100, month, birthDate.getDayOfMonth()));
 
         int serialNumber = generateSerialNumber(gender);
         pesel.append(String.format("%03d", serialNumber));
@@ -32,20 +40,45 @@ public class Services {
     }
 
     private int generateSerialNumber(char gender) {
-        int start = (gender == 'M' || gender == 'm') ? 0 : 500;
-        int end = start + 499;
-        return random.nextInt(end - start + 1) + start;
+        int start = (gender == 'M' || gender == 'm') ? 1 : 0;
+        int serial = random.nextInt(500) * 10 + start;
+        return serial;
     }
 
     private char calculateChecksum(String peselWithoutChecksum) {
-        int[] weights = {1, 3, 7, 9, 1, 3, 7, 9, 1};
+        int[] weights = {1, 3, 7, 9, 1, 3, 7, 9, 1, 3};
         int sum = 0;
 
-        for (int i = 0; i < peselWithoutChecksum.length(); i++) {
+        for (int i = 0; i < 10; i++) {
             sum += Character.getNumericValue(peselWithoutChecksum.charAt(i)) * weights[i];
         }
 
         int remainder = sum % 10;
-        return (char) ((10 - remainder) % 10 + '0');
+        int checksum = (10 - remainder) % 10; // Suma kontrolna
+
+        return (char) (checksum + '0');
+    }
+
+    public String generateRandomBankAccount() {
+        StringBuilder accountNumber = new StringBuilder();
+
+        for (int i = 0; i < 24; i++) {
+            accountNumber.append(random.nextInt(10));
+        }
+
+        String checkDigits = calculateIbanChecksum("PL00" + accountNumber);
+
+        return "PL" + checkDigits + accountNumber;
+    }
+
+    private String calculateIbanChecksum(String ibanWithoutChecksum) {
+        String rearranged = ibanWithoutChecksum.substring(4) + "252100";
+
+        BigInteger ibanAsNumber = new BigInteger(rearranged);
+
+        BigInteger remainder = ibanAsNumber.mod(BigInteger.valueOf(97));
+        BigInteger checksum = BigInteger.valueOf(98).subtract(remainder);
+
+        return String.format("%02d", checksum);
     }
 }

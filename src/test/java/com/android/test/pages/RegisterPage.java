@@ -42,7 +42,7 @@ public class RegisterPage {
     private WebElement comebackButton;
 
     public void clickRegisterButton() {
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
         wait.until(ExpectedConditions.visibilityOf(registerButton));
         registerButton.click();
     }
@@ -64,9 +64,5 @@ public class RegisterPage {
 
     public void clickCreateAccountButton() {
         createAccountButton.click();
-    }
-
-    public void clickComebackButton() {
-        comebackButton.click();
     }
 }

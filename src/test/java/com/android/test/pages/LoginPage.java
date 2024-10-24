@@ -13,9 +13,12 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
+
+import static org.testng.Assert.assertNotNull;
 
 public class LoginPage {
     private AndroidDriver driver;
@@ -41,21 +44,25 @@ public class LoginPage {
 
     public void enterPhoneNumber() {
         System.out.println("Rozpoczynam test logowania!");
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
         wait.until(ExpectedConditions.visibilityOf(phoneNumberField));
-        phoneNumberField.sendKeys(jsonHandler.getStrFromJson("login"));
+        String login = jsonHandler.getStrFromJson("login");
+        assertNotNull(login);
+        phoneNumberField.sendKeys(login);
     }
 
     public void enterPassword(LocalDateTime registerTime) {
         database.connect();
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(1));
 
         AtomicReference<List<String>> queryForTempPassword = new AtomicReference<>(new ArrayList<>());
         AtomicReference<String> passwordRef = new AtomicReference<>("");
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
         System.out.println("time: " + registerTime.toString());
 
-        wait.until(driver -> {
+        boolean passwordFound = false;
+        int maxAttempts = 20;
+        int attempts = 0;
+
+        while (!passwordFound && attempts < maxAttempts) {
             queryForTempPassword.set(database.queryForTempPassword("SELECT * FROM tikrow_qa.notificationsSmsHistory ORDER BY sendDate DESC LIMIT 5"));
             List<String> tempList = queryForTempPassword.get();
 
@@ -67,24 +74,45 @@ public class LoginPage {
                 String tempDate = tempParts[1];
                 String tempNumber = tempParts[2];
 
-                LocalDateTime parsedDate = LocalDateTime.parse(tempDate, dateFormatter);
-                if (parsedDate.isAfter(registerTime) && tempNumber.equals("48".concat(jsonHandler.getStrFromJson("login")))) {
-                    passwordRef.set(tempParts[0].replace("Czesc! Twoje haslo do Tikrow to: ", ""));
-                    System.out.println("Znaleziono dopasowanie!");
-                    return true;
+                try {
+                    LocalDateTime parsedDate = LocalDateTime.parse(tempDate, dateFormatter);
+                    if (parsedDate.isAfter(registerTime) && tempNumber.equals("48".concat(jsonHandler.getStrFromJson("login")))) {
+                        passwordRef.set(tempParts[0].replace("Czesc! Twoje haslo do Tikrow to: ", ""));
+                        System.out.println("Znaleziono dopasowanie!");
+                        passwordFound = true;
+                        break;
+                    }
+                } catch (DateTimeParseException e) {
+                    e.printStackTrace();
                 }
             }
 
-            System.out.println("Nie udało się znaleźć dopasowania.");
-            return false;
-        });
+            if (!passwordFound) {
+                System.out.println("Nie udało się znaleźć dopasowania. Próba: " + (attempts + 1));
+                attempts++;
+
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                    break;
+                }
+            }
+        }
+
+        if (passwordFound) {
+            String password = passwordRef.get();
+            assertNotNull(password);
+            passwordField.sendKeys(password);
+        } else {
+            System.out.println("Przekroczono limit prób. Nie znaleziono hasła.");
+        }
 
         database.disconnect();
-        passwordField.sendKeys(passwordRef.get());
     }
+
 
     public void clickLoginButton() {
         loginButton.click();
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(6));
     }
 }
