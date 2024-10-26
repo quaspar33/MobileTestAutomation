@@ -2,20 +2,13 @@ package com.android.test.pages;
 
 import com.android.test.AbstractPage;
 import com.android.test.JsonHandler;
-import com.android.test.Services;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.pagefactory.AndroidFindBy;
-import io.appium.java_client.pagefactory.AppiumFieldDecorator;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.time.Duration;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -108,11 +101,7 @@ public class QuestionnaireFirstPage extends AbstractPage {
         for (int i = 0; i < 20; i++) {
             yearPicker = driver.findElement(By.xpath("//android.widget.EditText[@resource-id=\"android:id/numberpicker_input\" and @text=\"" + (currentYear - i) + "\"]"));
             wait.until(ExpectedConditions.visibilityOf(yearPicker));
-            actions.moveToElement(yearPicker)
-                    .clickAndHold()
-                    .moveByOffset(0, 120)
-                    .release()
-                    .perform();
+            slide(0, 120, yearPicker);
         }
         birthDateOkButton.click();
     }
@@ -125,9 +114,9 @@ public class QuestionnaireFirstPage extends AbstractPage {
     }
 
     public void enterPesel() {
-        System.out.printf("Generuje pesel dla daty {} {} {}%n", currentYear, currentMonth, currentDay);
+        System.out.println(String.format("Generuje pesel dla daty: %d-%d-%d", currentYear, currentMonth, currentDay));
         String generatedPesel = services.generatePesel(LocalDate.of(currentYear, currentMonth, currentDay), 'm');
-        System.out.printf("Wygenerowano pesel: {}%n", generatedPesel);
+        System.out.println(String.format("Wygenerowano pesel: %s", generatedPesel));
         pesel.sendKeys(generatedPesel);
     }
 
@@ -140,11 +129,7 @@ public class QuestionnaireFirstPage extends AbstractPage {
         wait.until(ExpectedConditions.visibilityOf(surname));
         surname.sendKeys("Appium");
         wait.until(ExpectedConditions.visibilityOf(surnameFilled));
-        actions.moveToElement(surnameFilled)
-                .clickAndHold()
-                .moveByOffset(0, -1500)
-                .release()
-                .perform();
+        slide(0, -1500, surnameFilled);
     }
 
     public void enterEmail() {
@@ -174,14 +159,13 @@ public class QuestionnaireFirstPage extends AbstractPage {
            put(postalCode, "postalCode");
            put(cityName, "cityName");
            put(streetName, "streetName");
-//           put(buildingNumber, "buildingNumber");
         }};
 
         for (Map.Entry<WebElement, String> entry : adressMap.entrySet()) {
-            String jsonOut = jsonHandler.getStrFromJson(entry.getValue());
+            String xPathText = jsonHandler.getStrFromJson(entry.getValue());
             wait.until(ExpectedConditions.visibilityOf(entry.getKey()));
-            entry.getKey().sendKeys(jsonOut);
-            WebElement chooseElement = driver.findElement(By.xpath("//android.widget.TextView[@text=\"" + jsonOut +"\"]"));
+            entry.getKey().sendKeys(xPathText);
+            WebElement chooseElement = driver.findElement(By.xpath("//android.widget.TextView[@text=\"" + xPathText +"\"]"));
             wait.until(ExpectedConditions.visibilityOf(chooseElement));
             chooseElement.click();
         }
