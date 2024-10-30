@@ -25,7 +25,7 @@ public class BaseTest {
         capabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, "15.0");
         capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "emulator-5554");
         capabilities.setCapability("autoGrantPermissions", true);
-        capabilities.setCapability(MobileCapabilityType.APP, System.getProperty("user.home") + "/Desktop/AutomationTests/app_versions/android_qa/application-b9fe7b6e-d154-4eaa-8fef-f6c168315f27.apk");
+        capabilities.setCapability(MobileCapabilityType.APP, System.getProperty("user.dir") + "/../app_versions/android_qa/application-b9fe7b6e-d154-4eaa-8fef-f6c168315f27.apk");
         capabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME, "UiAutomator2");
 
         driver = new AndroidDriver(new URL("http://127.0.0.1:4723"), capabilities);
