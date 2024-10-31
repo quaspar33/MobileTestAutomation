@@ -47,7 +47,7 @@ public class RegisterPage extends AbstractPage {
 
     public void enterPhoneNumber() {
         System.out.println("Rozpoczynam test rejestracji!");
-        phoneNumberField.clear();
+        wait.until(ExpectedConditions.visibilityOf(phoneNumberField));
         phoneNumberField.sendKeys(jsonHandler.getStrFromJson("login"));
     }
 

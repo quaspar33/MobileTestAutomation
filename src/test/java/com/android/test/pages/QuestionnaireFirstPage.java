@@ -12,7 +12,6 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class QuestionnaireFirstPage extends AbstractPage {
     private JsonHandler jsonHandler;
@@ -152,7 +151,7 @@ public class QuestionnaireFirstPage extends AbstractPage {
 
     public void enterEmail() {
         wait.until(ExpectedConditions.visibilityOf(email));
-        email.sendKeys("test@test.com");
+        email.sendKeys("kacper.ziebacz01@gmail.com");
     }
 
     public void enterPhoneNumber() {
@@ -211,7 +210,7 @@ public class QuestionnaireFirstPage extends AbstractPage {
     }
 
     public void enterNextPage() {
-        wait.until(ExpectedConditions.elementToBeClickable(nextPage));
+        wait.until(ExpectedConditions.visibilityOf(nextPage));
         nextPage.click();
     }
 }
