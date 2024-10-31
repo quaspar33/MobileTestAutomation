@@ -18,6 +18,7 @@ public class QuestionnaireThirdPage extends AbstractPage {
     private WebElement endQuestionnaire;
 
     public void enterConfirmation() {
+        System.out.println("Rozpoczynam wypełnianie trzeciej strony kwestionariusza!");
         wait.until(ExpectedConditions.visibilityOf(confirmation));
         confirmation.click();
     }

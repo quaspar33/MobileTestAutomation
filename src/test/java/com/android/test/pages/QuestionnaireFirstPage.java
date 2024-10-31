@@ -83,7 +83,7 @@ public class QuestionnaireFirstPage extends AbstractPage {
     @AndroidFindBy(uiAutomator = "new UiSelector().className(\"com.horcrux.svg.SvgView\").instance(6)")
     private WebElement cityNameScroll;
 
-    @AndroidFindBy(uiAutomator = "new UiSelector().className(\"android.widget.EditText\").instance(5)")
+    @AndroidFindBy(uiAutomator = "new UiSelector().className(\"android.widget.EditText\").instance(6)")
     private WebElement streetName;
 
     @AndroidFindBy(uiAutomator = "new UiSelector().className(\"com.horcrux.svg.SvgView\").instance(8)")
@@ -102,7 +102,7 @@ public class QuestionnaireFirstPage extends AbstractPage {
     private WebElement nextPage;
 
     public void clickFillQuestionnaire() {
-        System.out.println("Rozpoczynam wypełnianie kwestionariusza!");
+        System.out.println("Rozpoczynam wypełnianie pierwszej strony kwestionariusza!");
         wait.until(ExpectedConditions.visibilityOf(fillQuestionnaire));
         fillQuestionnaire.click();
     }
@@ -151,7 +151,7 @@ public class QuestionnaireFirstPage extends AbstractPage {
 
     public void enterEmail() {
         wait.until(ExpectedConditions.visibilityOf(email));
-        email.sendKeys("kacper.ziebacz01@gmail.com");
+        email.sendKeys(jsonHandler.getStrFromJson("email"));
     }
 
     public void enterPhoneNumber() {
@@ -210,7 +210,8 @@ public class QuestionnaireFirstPage extends AbstractPage {
     }
 
     public void enterNextPage() {
-        wait.until(ExpectedConditions.visibilityOf(nextPage));
+        touch(860, 2070);
+        wait.until(ExpectedConditions.elementToBeClickable(nextPage));
         nextPage.click();
     }
 }
