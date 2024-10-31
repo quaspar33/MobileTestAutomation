@@ -8,9 +8,11 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
+import java.time.Duration;
 import java.time.LocalDate;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class QuestionnaireFirstPage extends AbstractPage {
     private JsonHandler jsonHandler;
@@ -61,28 +63,40 @@ public class QuestionnaireFirstPage extends AbstractPage {
     @AndroidFindBy(uiAutomator = "new UiSelector().text(\"123456789\")")
     private WebElement phoneNumber;
 
-    @AndroidFindBy(uiAutomator = "new UiSelector().className(\"android.widget.EditText\").instance(6)")
+    @AndroidFindBy(uiAutomator = "new UiSelector().className(\"com.horcrux.svg.SvgView\").instance(2)")
     private WebElement taxOffice;
 
-    @AndroidFindBy(uiAutomator = "new UiSelector().text(\"Urząd Skarbowy Poznań-Wilda 61-558, Dolna Wilda 80\").instance(0)")
+    @AndroidFindBy(uiAutomator = "new UiSelector().className(\"android.view.ViewGroup\").instance(62)")
     private WebElement taxOfficeName;
 
     @AndroidFindBy(uiAutomator = "new UiSelector().text(\"Nr rachunku bankowego\")")
     private WebElement bankNumber;
 
-    @AndroidFindBy(uiAutomator = "new UiSelector().className(\"android.widget.EditText\").instance(5)")
+    @AndroidFindBy(uiAutomator = "new UiSelector().className(\"android.widget.EditText\").instance(4)")
     private WebElement postalCode;
 
-    @AndroidFindBy(uiAutomator = "new UiSelector().className(\"android.widget.EditText\").instance(6)")
+    @AndroidFindBy(uiAutomator = "new UiSelector().className(\"com.horcrux.svg.SvgView\").instance(4)")
+    private WebElement postalCodeScroll;
+
+    @AndroidFindBy(uiAutomator = "new UiSelector().className(\"android.widget.EditText\").instance(5)")
     private WebElement cityName;
 
-    @AndroidFindBy(uiAutomator = "new UiSelector().className(\"android.widget.EditText\").instance(6)")
+    @AndroidFindBy(uiAutomator = "new UiSelector().className(\"com.horcrux.svg.SvgView\").instance(6)")
+    private WebElement cityNameScroll;
+
+    @AndroidFindBy(uiAutomator = "new UiSelector().className(\"android.widget.EditText\").instance(5)")
     private WebElement streetName;
+
+    @AndroidFindBy(uiAutomator = "new UiSelector().className(\"com.horcrux.svg.SvgView\").instance(8)")
+    private WebElement streetNameScroll;
 
     @AndroidFindBy(uiAutomator = "new UiSelector().text(\"Nr budynku\")")
     private WebElement buildingNumber;
 
-    @AndroidFindBy(uiAutomator = "new UiSelector().className(\"android.view.ViewGroup\").instance(52)")
+    @AndroidFindBy(uiAutomator = "new UiSelector().text(\"12\")")
+    WebElement buildingNumberScroll;
+
+    @AndroidFindBy(uiAutomator = "new UiSelector().className(\"android.view.ViewGroup\").instance(51)")
     private WebElement yesCheckbox;
 
     @AndroidFindBy(uiAutomator = "new UiSelector().text(\"Dalej\")")
@@ -98,10 +112,13 @@ public class QuestionnaireFirstPage extends AbstractPage {
         wait.until(ExpectedConditions.visibilityOf(birthDate));
         birthDate.click();
         WebElement yearPicker;
+        By currentYearElement;
         for (int i = 0; i < 20; i++) {
-            yearPicker = driver.findElement(By.xpath("//android.widget.EditText[@resource-id=\"android:id/numberpicker_input\" and @text=\"" + (currentYear - i) + "\"]"));
-            wait.until(ExpectedConditions.visibilityOf(yearPicker));
-            slide(0, 120, yearPicker);
+            currentYearElement = By.xpath("//android.widget.EditText[@resource-id=\"android:id/numberpicker_input\" and @text=\"" + currentYear + "\"]");
+            wait.until(ExpectedConditions.presenceOfElementLocated(currentYearElement));
+            yearPicker = driver.findElement(currentYearElement);
+            slide(0, 130, yearPicker);
+            currentYear -= 1;
         }
         birthDateOkButton.click();
     }
@@ -117,6 +134,7 @@ public class QuestionnaireFirstPage extends AbstractPage {
         System.out.println(String.format("Generuje pesel dla daty: %d-%d-%d", currentYear, currentMonth, currentDay));
         String generatedPesel = services.generatePesel(LocalDate.of(currentYear, currentMonth, currentDay), 'm');
         System.out.println(String.format("Wygenerowano pesel: %s", generatedPesel));
+        wait.until(ExpectedConditions.visibilityOf(pesel));
         pesel.sendKeys(generatedPesel);
     }
 
@@ -155,30 +173,45 @@ public class QuestionnaireFirstPage extends AbstractPage {
     }
 
     public void enterAddress() {
-        Map<WebElement, String> adressMap = new HashMap<>() {{
-           put(postalCode, "postalCode");
-           put(cityName, "cityName");
-           put(streetName, "streetName");
+        Map<WebElement[], String> adressMap = new LinkedHashMap<>() {{
+           put(new WebElement[]{postalCode, postalCodeScroll}, "postalCode");
+           put(new WebElement[]{cityName, cityNameScroll}, "cityName");
+           put(new WebElement[]{streetName, streetNameScroll}, "streetName");
         }};
 
-        for (Map.Entry<WebElement, String> entry : adressMap.entrySet()) {
-            String xPathText = jsonHandler.getStrFromJson(entry.getValue());
-            wait.until(ExpectedConditions.visibilityOf(entry.getKey()));
-            entry.getKey().sendKeys(xPathText);
-            WebElement chooseElement = driver.findElement(By.xpath("//android.widget.TextView[@text=\"" + xPathText +"\"]"));
-            wait.until(ExpectedConditions.visibilityOf(chooseElement));
+        WebElement element;
+        WebElement elementScroll;
+        String xPathText;
+        By currentElement;
+        WebElement chooseElement;
+
+        for (Map.Entry<WebElement[], String> entry : adressMap.entrySet()) {
+            element = entry.getKey()[0];
+            elementScroll = entry.getKey()[1];
+            xPathText = jsonHandler.getStrFromJson(entry.getValue());
+            wait.until(ExpectedConditions.visibilityOf(element));
+            element.sendKeys(xPathText);
+            elementScroll.click();
+            currentElement = By.xpath("//android.widget.TextView[@text=\"" + xPathText +"\"]");
+            wait.until(ExpectedConditions.presenceOfElementLocated(currentElement));
+            chooseElement = driver.findElement(currentElement);
             chooseElement.click();
+            slide(0, -1500, elementScroll);
         }
 
         wait.until(ExpectedConditions.visibilityOf(buildingNumber));
         buildingNumber.sendKeys(jsonHandler.getStrFromJson("buildingNumber"));
+        wait.until(ExpectedConditions.visibilityOf(buildingNumberScroll));
+        slide(0, -1500, buildingNumberScroll);
     }
 
     public void setYesCheckbox() {
+        wait.until(ExpectedConditions.visibilityOf(yesCheckbox));
         yesCheckbox.click();
     }
 
     public void enterNextPage() {
+        wait.until(ExpectedConditions.elementToBeClickable(nextPage));
         nextPage.click();
     }
 }

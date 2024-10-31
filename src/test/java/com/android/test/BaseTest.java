@@ -30,13 +30,13 @@ public class BaseTest {
 
         driver = new AndroidDriver(new URL("http://127.0.0.1:4723"), capabilities);
     }
-
-    @AfterSuite
-    public void tearDown() {
-        if (driver != null) {
-            driver.quit();
-        }
-    }
+//
+//    @AfterSuite
+//    public void tearDown() {
+//        if (driver != null) {
+//            driver.quit();
+//        }
+//    }
 
     private void databaseSetup() {
         jsonHandler = new JsonHandler("base.json");
