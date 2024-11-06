@@ -7,6 +7,7 @@ import org.testng.annotations.*;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.SecureRandom;
 import java.time.LocalDateTime;
 
 public class BaseTest {
@@ -14,7 +15,7 @@ public class BaseTest {
     private Database database;
     private JsonHandler jsonHandler;
     private static LocalDateTime registerTime;
-    private Services services;
+    private SecureRandom random = new SecureRandom();
 
     @BeforeSuite
     public void setupApp() throws MalformedURLException {
@@ -41,7 +42,6 @@ public class BaseTest {
     private void databaseSetup() {
         jsonHandler = new JsonHandler("base.json");
         database = new Database();
-        services = new Services();
         String login = jsonHandler.getStrFromJson("login");
         database.connect();
 
@@ -50,12 +50,21 @@ public class BaseTest {
         System.out.println("Znaleziono dopasowanie: " + checkDatabaseLogin);
 
         if (checkDatabaseLogin != null && !checkDatabaseLogin.isEmpty()) {
-            String newLogin = login + services.generateRandomString(3, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789");
+            String newLogin = login + generateRandomString(3, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789");
             int rowsAffected = database.executeUpdate("update tikrow_dev.user set login = '" + newLogin + "' where login like '" + login + "'");
             System.out.println("Zmodyfikowano wiersze w liczbie: " + rowsAffected);
         }
 
         database.disconnect();
+    }
+
+    private String generateRandomString(int length, String chars) {
+        StringBuilder sb = new StringBuilder(length);
+        for (int i = 0; i < length; i++) {
+            int index = random.nextInt(chars.length());
+            sb.append(chars.charAt(index));
+        }
+        return sb.toString();
     }
 
     public static void setRegisterTime(LocalDateTime registerTime) {

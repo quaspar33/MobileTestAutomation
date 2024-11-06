@@ -8,10 +8,12 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
+import java.math.BigInteger;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 public class QuestionnaireFirstPage extends AbstractPage {
@@ -131,11 +133,46 @@ public class QuestionnaireFirstPage extends AbstractPage {
 
     public void enterPesel() {
         System.out.println(String.format("Generuje pesel dla daty: %d-%d-%d", currentYear, currentMonth, currentDay));
-        String generatedPesel = services.generatePesel(LocalDate.of(currentYear-20, currentMonth, currentDay), 'm');
+        String generatedPesel = generatePesel(LocalDate.of(currentYear-20, currentMonth, currentDay), 'm');
         System.out.println(String.format("Wygenerowano pesel: %s", generatedPesel));
         wait.until(ExpectedConditions.visibilityOf(pesel));
         pesel.sendKeys(generatedPesel);
     }
+
+    private String generatePesel(LocalDate birthDate, char gender) {
+        StringBuilder pesel = new StringBuilder();
+
+        int year = birthDate.getYear();
+        int month = birthDate.getMonthValue();
+        int day = birthDate.getDayOfMonth();
+
+        if (year >= 2000) {
+            month += 20;
+        }
+
+        pesel.append(String.format("%02d%02d%02d", year % 100, month, day));
+
+        Random random = new Random();
+        int start = (gender == 'M' || gender == 'm') ? 1 : 0;
+        int serialNumber = random.nextInt(500) * 10 + start;
+
+        pesel.append(String.format("%03d", serialNumber));
+
+        int[] weights = {1, 3, 7, 9, 1, 3, 7, 9, 1, 3};
+        int sum = 0;
+
+        for (int i = 0; i < pesel.length(); i++) {
+            sum += Character.getNumericValue(pesel.charAt(i)) * weights[i];
+        }
+
+        int remainder = sum % 10;
+        int checksum = (10 - remainder) % 10;
+
+        pesel.append((char) (checksum + '0'));
+
+        return pesel.toString();
+    }
+
 
     public void enterName() {
         wait.until(ExpectedConditions.visibilityOf(name));
@@ -166,9 +203,29 @@ public class QuestionnaireFirstPage extends AbstractPage {
     }
 
     public void enterBankNumber() {
-        String bankNr = services.generateRandomBankAccount();
+        String bankNr = generateRandomBankAccount();
         System.out.println("Wygenerowano numer bankowy: " + bankNr);
         bankNumber.sendKeys(bankNr);
+    }
+
+    private String generateRandomBankAccount() {
+        StringBuilder accountNumber = new StringBuilder();
+        Random random = new Random();
+
+        for (int i = 0; i < 24; i++) {
+            accountNumber.append(random.nextInt(10));
+        }
+
+        String ibanWithoutChecksum = "PL00" + accountNumber;
+
+        String rearranged = ibanWithoutChecksum.substring(4) + "252100";
+
+        BigInteger ibanAsNumber = new BigInteger(rearranged);
+
+        BigInteger remainder = ibanAsNumber.mod(BigInteger.valueOf(97));
+        BigInteger checksum = BigInteger.valueOf(98).subtract(remainder);
+
+        return "PL" + String.format("%02d", checksum) + accountNumber;
     }
 
     public void enterAddress() {

@@ -16,7 +16,6 @@ import java.util.concurrent.TimeUnit;
 public abstract class AbstractPage {
     public static AndroidDriver driver;
     public static WebDriverWait wait;
-    public static Services services;
     public static Actions actions;
     public static Database database;
 
@@ -24,7 +23,6 @@ public abstract class AbstractPage {
         AbstractPage.driver = driver;
         PageFactory.initElements(new AppiumFieldDecorator(driver), this);
         wait = new WebDriverWait(driver, Duration.ofSeconds(15));
-        services = new Services();
         actions = new Actions(driver);
         database = new Database();
     }
