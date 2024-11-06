@@ -18,6 +18,7 @@ public abstract class AbstractPage {
     public static WebDriverWait wait;
     public static Actions actions;
     public static Database database;
+    public static ApiHandler apiHandler;
 
     public AbstractPage(AndroidDriver driver) {
         AbstractPage.driver = driver;
@@ -25,6 +26,7 @@ public abstract class AbstractPage {
         wait = new WebDriverWait(driver, Duration.ofSeconds(15));
         actions = new Actions(driver);
         database = new Database();
+        apiHandler = new ApiHandler();
     }
 
     public void slideFromPoint(int startX, int startY, int endX, int endY) {

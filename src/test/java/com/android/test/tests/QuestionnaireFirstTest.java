@@ -26,10 +26,9 @@ public class QuestionnaireFirstTest extends AbstractTest {
         questionnaireFirstPage.enterEmail();
         questionnaireFirstPage.enterPhoneNumber();
         questionnaireFirstPage.enterTaxOffice();
-        questionnaireFirstPage.enterBankNumber();
+        questionnaireFirstPage.enterIban();
         questionnaireFirstPage.enterAddress();
         questionnaireFirstPage.setYesCheckbox();
-//        questionnaireFirstPage.enableNextPageButton();
         questionnaireFirstPage.enterNextPage();
     }
 }

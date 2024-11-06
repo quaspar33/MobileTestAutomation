@@ -29,7 +29,7 @@ public class QuestionnaireFirstPage extends AbstractPage {
         LocalDate currentDate = LocalDate.now();
         currentMonth = currentDate.getMonthValue();
         currentDay = currentDate.getDayOfMonth();
-        currentYear = currentDate.getYear();
+        currentYear = currentDate.getYear() - 20;
     }
 
     @AndroidFindBy(uiAutomator = "new UiSelector().text(\"Wypełnij kwestionariusz\")")
@@ -69,7 +69,7 @@ public class QuestionnaireFirstPage extends AbstractPage {
     private WebElement taxOfficeName;
 
     @AndroidFindBy(uiAutomator = "new UiSelector().text(\"Nr rachunku bankowego\")")
-    private WebElement bankNumber;
+    private WebElement iban;
 
     @AndroidFindBy(uiAutomator = "new UiSelector().className(\"android.widget.EditText\").instance(2)")
     private WebElement postalCode;
@@ -133,46 +133,10 @@ public class QuestionnaireFirstPage extends AbstractPage {
 
     public void enterPesel() {
         System.out.println(String.format("Generuje pesel dla daty: %d-%d-%d", currentYear, currentMonth, currentDay));
-        String generatedPesel = generatePesel(LocalDate.of(currentYear-20, currentMonth, currentDay), 'm');
-        System.out.println(String.format("Wygenerowano pesel: %s", generatedPesel));
+        String generatedPesel = apiHandler.GET(String.format("https://generator.avris.it/api/PL/pesel?birthdate=%d-%02d-%02d&gender=m", currentYear-20, currentMonth, currentDay));
         wait.until(ExpectedConditions.visibilityOf(pesel));
-        pesel.sendKeys(generatedPesel);
+        pesel.sendKeys(generatedPesel.substring(1, generatedPesel.length() - 1));
     }
-
-    private String generatePesel(LocalDate birthDate, char gender) {
-        StringBuilder pesel = new StringBuilder();
-
-        int year = birthDate.getYear();
-        int month = birthDate.getMonthValue();
-        int day = birthDate.getDayOfMonth();
-
-        if (year >= 2000) {
-            month += 20;
-        }
-
-        pesel.append(String.format("%02d%02d%02d", year % 100, month, day));
-
-        Random random = new Random();
-        int start = (gender == 'M' || gender == 'm') ? 1 : 0;
-        int serialNumber = random.nextInt(500) * 10 + start;
-
-        pesel.append(String.format("%03d", serialNumber));
-
-        int[] weights = {1, 3, 7, 9, 1, 3, 7, 9, 1, 3};
-        int sum = 0;
-
-        for (int i = 0; i < pesel.length(); i++) {
-            sum += Character.getNumericValue(pesel.charAt(i)) * weights[i];
-        }
-
-        int remainder = sum % 10;
-        int checksum = (10 - remainder) % 10;
-
-        pesel.append((char) (checksum + '0'));
-
-        return pesel.toString();
-    }
-
 
     public void enterName() {
         wait.until(ExpectedConditions.visibilityOf(name));
@@ -202,30 +166,9 @@ public class QuestionnaireFirstPage extends AbstractPage {
         taxOfficeName.click();
     }
 
-    public void enterBankNumber() {
-        String bankNr = generateRandomBankAccount();
-        System.out.println("Wygenerowano numer bankowy: " + bankNr);
-        bankNumber.sendKeys(bankNr);
-    }
-
-    private String generateRandomBankAccount() {
-        StringBuilder accountNumber = new StringBuilder();
-        Random random = new Random();
-
-        for (int i = 0; i < 24; i++) {
-            accountNumber.append(random.nextInt(10));
-        }
-
-        String ibanWithoutChecksum = "PL00" + accountNumber;
-
-        String rearranged = ibanWithoutChecksum.substring(4) + "252100";
-
-        BigInteger ibanAsNumber = new BigInteger(rearranged);
-
-        BigInteger remainder = ibanAsNumber.mod(BigInteger.valueOf(97));
-        BigInteger checksum = BigInteger.valueOf(98).subtract(remainder);
-
-        return "PL" + String.format("%02d", checksum) + accountNumber;
+    public void enterIban() {
+        String ibanStr = apiHandler.GET("https://generator.avris.it/api/_/iban?country=PL");
+        iban.sendKeys(ibanStr.substring(3, ibanStr.length() - 1));
     }
 
     public void enterAddress() {
@@ -263,12 +206,6 @@ public class QuestionnaireFirstPage extends AbstractPage {
     public void setYesCheckbox() {
         wait.until(ExpectedConditions.visibilityOf(yesCheckbox));
         yesCheckbox.click();
-    }
-
-    public void enableNextPageButton() {
-        goBackButton.click();
-        wait.until(ExpectedConditions.visibilityOf(fillQuestionnaireFromProfile));
-        fillQuestionnaireFromProfile.click();
     }
 
     public void enterNextPage() {

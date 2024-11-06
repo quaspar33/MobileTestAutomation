@@ -7,15 +7,14 @@ import org.testng.annotations.*;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.security.SecureRandom;
 import java.time.LocalDateTime;
+import java.util.Random;
 
 public class BaseTest {
     public static AndroidDriver driver;
     private Database database;
     private JsonHandler jsonHandler;
     private static LocalDateTime registerTime;
-    private SecureRandom random = new SecureRandom();
 
     @BeforeSuite
     public void setupApp() throws MalformedURLException {
@@ -60,6 +59,7 @@ public class BaseTest {
 
     private String randomLoginEnd(int length, String chars) {
         StringBuilder sb = new StringBuilder(length);
+        Random random = new Random();
         for (int i = 0; i < length; i++) {
             int index = random.nextInt(chars.length());
             sb.append(chars.charAt(index));
