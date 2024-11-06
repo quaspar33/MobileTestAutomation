@@ -42,7 +42,7 @@ public class Database {
                 int id = resultSet.getInt("id");
                 String login = resultSet.getString("login");
 
-                output.append("id: ").append(id).append(", login: ").append(login).append("\n");
+                output.append("id: ").append(id).append(", login: ").append(login);
             }
         } catch (SQLException e) {
             e.printStackTrace();

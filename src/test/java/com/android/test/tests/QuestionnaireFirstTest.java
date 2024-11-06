@@ -29,6 +29,7 @@ public class QuestionnaireFirstTest extends AbstractTest {
         questionnaireFirstPage.enterBankNumber();
         questionnaireFirstPage.enterAddress();
         questionnaireFirstPage.setYesCheckbox();
+//        questionnaireFirstPage.enableNextPageButton();
         questionnaireFirstPage.enterNextPage();
     }
 }

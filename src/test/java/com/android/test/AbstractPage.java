@@ -11,6 +11,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
 import java.util.Collections;
+import java.util.concurrent.TimeUnit;
 
 public abstract class AbstractPage {
     public static AndroidDriver driver;
@@ -22,28 +23,25 @@ public abstract class AbstractPage {
     public AbstractPage(AndroidDriver driver) {
         AbstractPage.driver = driver;
         PageFactory.initElements(new AppiumFieldDecorator(driver), this);
-        wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        wait = new WebDriverWait(driver, Duration.ofSeconds(15));
         services = new Services();
         actions = new Actions(driver);
         database = new Database();
     }
 
-    public void slide(int xOffset, int yOffset, WebElement webElement) {
-        actions.moveToElement(webElement)
-                .clickAndHold()
-                .moveByOffset(xOffset, yOffset)
-                .release()
-                .perform();
+    public void slideFromPoint(int startX, int startY, int endX, int endY) {
+        PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
+        Sequence swipe = new Sequence(finger, 0);
+
+        swipe.addAction(finger.createPointerMove(Duration.ofMillis(0), PointerInput.Origin.viewport(), startX, startY));
+        swipe.addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()));
+        swipe.addAction(finger.createPointerMove(Duration.ofMillis(500), PointerInput.Origin.viewport(), endX, endY));
+        swipe.addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
+
+        driver.perform(Collections.singletonList(swipe));
     }
 
-    public void touch(int x, int y) {
-        PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
-        Sequence tap = new Sequence(finger, 0);
-
-        tap.addAction(finger.createPointerMove(Duration.ofMillis(0), PointerInput.Origin.viewport(), x, y));
-        tap.addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()));
-        tap.addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
-
-        driver.perform(Collections.singletonList(tap));
+    public void implicitWait(int count, TimeUnit timeUnit) {
+        driver.manage().timeouts().implicitlyWait(count, timeUnit);
     }
 }

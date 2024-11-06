@@ -12,6 +12,7 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 public class QuestionnaireFirstPage extends AbstractPage {
     private JsonHandler jsonHandler;
@@ -53,9 +54,6 @@ public class QuestionnaireFirstPage extends AbstractPage {
     @AndroidFindBy(uiAutomator = "new UiSelector().text(\"Nazwisko\")")
     private WebElement surname;
 
-    @AndroidFindBy(uiAutomator = "new UiSelector().text(\"Appium\")")
-    private WebElement surnameFilled;
-
     @AndroidFindBy(uiAutomator = "new UiSelector().text(\"E-mail\")")
     private WebElement email;
 
@@ -71,19 +69,19 @@ public class QuestionnaireFirstPage extends AbstractPage {
     @AndroidFindBy(uiAutomator = "new UiSelector().text(\"Nr rachunku bankowego\")")
     private WebElement bankNumber;
 
-    @AndroidFindBy(uiAutomator = "new UiSelector().className(\"android.widget.EditText\").instance(4)")
+    @AndroidFindBy(uiAutomator = "new UiSelector().className(\"android.widget.EditText\").instance(2)")
     private WebElement postalCode;
 
     @AndroidFindBy(uiAutomator = "new UiSelector().className(\"com.horcrux.svg.SvgView\").instance(4)")
     private WebElement postalCodeScroll;
 
-    @AndroidFindBy(uiAutomator = "new UiSelector().className(\"android.widget.EditText\").instance(5)")
+    @AndroidFindBy(uiAutomator = "new UiSelector().className(\"android.widget.EditText\").instance(3)")
     private WebElement cityName;
 
     @AndroidFindBy(uiAutomator = "new UiSelector().className(\"com.horcrux.svg.SvgView\").instance(6)")
     private WebElement cityNameScroll;
 
-    @AndroidFindBy(uiAutomator = "new UiSelector().className(\"android.widget.EditText\").instance(6)")
+    @AndroidFindBy(uiAutomator = "new UiSelector().className(\"android.widget.EditText\").instance(4)")
     private WebElement streetName;
 
     @AndroidFindBy(uiAutomator = "new UiSelector().className(\"com.horcrux.svg.SvgView\").instance(8)")
@@ -98,6 +96,12 @@ public class QuestionnaireFirstPage extends AbstractPage {
     @AndroidFindBy(uiAutomator = "new UiSelector().className(\"android.view.ViewGroup\").instance(51)")
     private WebElement yesCheckbox;
 
+    @AndroidFindBy(uiAutomator = "new UiSelector().className(\"com.horcrux.svg.PathView\").instance(0)")
+    private WebElement goBackButton;
+
+    @AndroidFindBy(uiAutomator = "new UiSelector().className(\"com.horcrux.svg.PathView\").instance(17)")
+    private WebElement fillQuestionnaireFromProfile;
+
     @AndroidFindBy(uiAutomator = "new UiSelector().text(\"Dalej\")")
     private WebElement nextPage;
 
@@ -110,14 +114,10 @@ public class QuestionnaireFirstPage extends AbstractPage {
     public void enterBirthDate() {
         wait.until(ExpectedConditions.visibilityOf(birthDate));
         birthDate.click();
-        WebElement yearPicker;
-        By currentYearElement;
+        implicitWait(500, TimeUnit.MILLISECONDS);
         for (int i = 0; i < 20; i++) {
-            currentYearElement = By.xpath("//android.widget.EditText[@resource-id=\"android:id/numberpicker_input\" and @text=\"" + currentYear + "\"]");
-            wait.until(ExpectedConditions.presenceOfElementLocated(currentYearElement));
-            yearPicker = driver.findElement(currentYearElement);
-            slide(0, 130, yearPicker);
-            currentYear -= 1;
+            slideFromPoint(745, 1118, 745, 1249);
+            implicitWait(200, TimeUnit.MILLISECONDS);
         }
         birthDateOkButton.click();
     }
@@ -131,7 +131,7 @@ public class QuestionnaireFirstPage extends AbstractPage {
 
     public void enterPesel() {
         System.out.println(String.format("Generuje pesel dla daty: %d-%d-%d", currentYear, currentMonth, currentDay));
-        String generatedPesel = services.generatePesel(LocalDate.of(currentYear, currentMonth, currentDay), 'm');
+        String generatedPesel = services.generatePesel(LocalDate.of(currentYear-20, currentMonth, currentDay), 'm');
         System.out.println(String.format("Wygenerowano pesel: %s", generatedPesel));
         wait.until(ExpectedConditions.visibilityOf(pesel));
         pesel.sendKeys(generatedPesel);
@@ -145,17 +145,17 @@ public class QuestionnaireFirstPage extends AbstractPage {
     public void enterSurname() {
         wait.until(ExpectedConditions.visibilityOf(surname));
         surname.sendKeys("Appium");
-        wait.until(ExpectedConditions.visibilityOf(surnameFilled));
-        slide(0, -1500, surnameFilled);
     }
 
     public void enterEmail() {
+        slideFromPoint(550, 999, 550, 500);
         wait.until(ExpectedConditions.visibilityOf(email));
         email.sendKeys(jsonHandler.getStrFromJson("email"));
     }
 
     public void enterPhoneNumber() {
         phoneNumber.sendKeys(jsonHandler.getStrFromJson("phoneNumber"));
+        slideFromPoint(516, 1913, 512, 471);
     }
 
     public void enterTaxOffice() {
@@ -195,13 +195,12 @@ public class QuestionnaireFirstPage extends AbstractPage {
             wait.until(ExpectedConditions.presenceOfElementLocated(currentElement));
             chooseElement = driver.findElement(currentElement);
             chooseElement.click();
-            slide(0, -1500, elementScroll);
+            slideFromPoint(491, 1380, 471, 676);
         }
 
         wait.until(ExpectedConditions.visibilityOf(buildingNumber));
         buildingNumber.sendKeys(jsonHandler.getStrFromJson("buildingNumber"));
-        wait.until(ExpectedConditions.visibilityOf(buildingNumberScroll));
-        slide(0, -1500, buildingNumberScroll);
+        slideFromPoint(491, 1380, 471, 676);
     }
 
     public void setYesCheckbox() {
@@ -209,9 +208,18 @@ public class QuestionnaireFirstPage extends AbstractPage {
         yesCheckbox.click();
     }
 
+    public void enableNextPageButton() {
+        goBackButton.click();
+        wait.until(ExpectedConditions.visibilityOf(fillQuestionnaireFromProfile));
+        fillQuestionnaireFromProfile.click();
+    }
+
     public void enterNextPage() {
-        touch(860, 2070);
-        wait.until(ExpectedConditions.elementToBeClickable(nextPage));
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         nextPage.click();
     }
 }

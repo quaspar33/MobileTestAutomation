@@ -59,7 +59,7 @@ public class LoginPage extends AbstractPage {
         int attempts = 0;
 
         while (!passwordFound && attempts < maxAttempts) {
-            queryForTempPassword.set(database.queryForTempPassword("SELECT * FROM tikrow_qa.notificationsSmsHistory ORDER BY sendDate DESC LIMIT 5"));
+            queryForTempPassword.set(database.queryForTempPassword("SELECT * FROM tikrow_dev.notificationsSmsHistory ORDER BY sendDate DESC LIMIT 5"));
             List<String> tempList = queryForTempPassword.get();
 
             for (String s : tempList) {
@@ -73,7 +73,7 @@ public class LoginPage extends AbstractPage {
                 try {
                     LocalDateTime parsedDate = LocalDateTime.parse(tempDate, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
                     if (parsedDate.isAfter(registerTime) && tempNumber.equals("48".concat(jsonHandler.getStrFromJson("phoneNumber")))) {
-                        passwordRef.set(tempParts[0].replace("Czesc! Twoje haslo do Tikrow to: ", ""));
+                        passwordRef.set(tempParts[0].replace("[DEV] Czesc! Twoje haslo do Tikrow to: ", ""));
                         System.out.println("Znaleziono dopasowanie!");
                         passwordFound = true;
                         break;

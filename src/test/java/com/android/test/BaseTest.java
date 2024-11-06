@@ -25,7 +25,7 @@ public class BaseTest {
         capabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, "15.0");
         capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "emulator-5554");
         capabilities.setCapability("autoGrantPermissions", true);
-        capabilities.setCapability(MobileCapabilityType.APP, System.getProperty("user.dir") + "/../app_versions/android_qa/application-b9fe7b6e-d154-4eaa-8fef-f6c168315f27.apk");
+        capabilities.setCapability(MobileCapabilityType.APP, System.getProperty("user.dir") + "/../app_versions/android_dev/application-c1ba8ccb-5e3a-44a2-ad60-f20e43ffab4d.apk");
         capabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME, "UiAutomator2");
 
         driver = new AndroidDriver(new URL("http://127.0.0.1:4723"), capabilities);
@@ -45,13 +45,13 @@ public class BaseTest {
         String login = jsonHandler.getStrFromJson("login");
         database.connect();
 
-        String checkDatabaseLogin = database.queryForLogin("select * from tikrow_qa.user where login like '" + login + "'");
+        String checkDatabaseLogin = database.queryForLogin("select * from tikrow_dev.user where login like '" + login + "'");
 
-        System.out.println(checkDatabaseLogin);
+        System.out.println("Znaleziono dopasowanie: " + checkDatabaseLogin);
 
         if (checkDatabaseLogin != null && !checkDatabaseLogin.isEmpty()) {
             String newLogin = login + services.generateRandomString(3, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789");
-            int rowsAffected = database.executeUpdate("update tikrow_qa.user set login = '" + newLogin + "' where login like '" + login + "'");
+            int rowsAffected = database.executeUpdate("update tikrow_dev.user set login = '" + newLogin + "' where login like '" + login + "'");
             System.out.println("Zmodyfikowano wiersze w liczbie: " + rowsAffected);
         }
 

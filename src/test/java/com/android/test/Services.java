@@ -3,10 +3,15 @@ package com.android.test;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.time.LocalDate;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 
 public class Services {
 
     private SecureRandom random = new SecureRandom();
+    private JsonHandler jsonHandler = new JsonHandler("services.json");
 
     public String generateRandomString(int length, String chars) {
         StringBuilder sb = new StringBuilder(length);
@@ -78,5 +83,29 @@ public class Services {
         BigInteger checksum = BigInteger.valueOf(98).subtract(remainder);
 
         return String.format("%02d", checksum);
+    }
+
+    private void sendDataToEndpoint() {
+        HttpClient client = HttpClient.newHttpClient();
+
+        String jsonBody = jsonHandler.getStrFromJson("body");
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(jsonHandler.getStrFromJson("uri")))
+                .header("Content-Type", "application/hal+json")
+                .header("Authorization", jsonHandler.getStrFromJson("authorization"))
+                .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
+                .build();
+
+        try {
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() == 200) {
+                System.out.println("Udało się wysłać dane na endpoint");
+            } else {
+                System.out.println("Nie udało się wysłać danych na endpoint.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
