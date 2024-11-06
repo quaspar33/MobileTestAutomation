@@ -272,11 +272,7 @@ public class QuestionnaireFirstPage extends AbstractPage {
     }
 
     public void enterNextPage() {
-        try {
-            Thread.sleep(10000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+        implicitWait(10000, TimeUnit.MILLISECONDS);
         nextPage.click();
     }
 }

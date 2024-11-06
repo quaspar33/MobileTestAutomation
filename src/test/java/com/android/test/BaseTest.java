@@ -50,7 +50,7 @@ public class BaseTest {
         System.out.println("Znaleziono dopasowanie: " + checkDatabaseLogin);
 
         if (checkDatabaseLogin != null && !checkDatabaseLogin.isEmpty()) {
-            String newLogin = login + generateRandomString(3, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789");
+            String newLogin = login + randomLoginEnd(3, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789");
             int rowsAffected = database.executeUpdate("update tikrow_dev.user set login = '" + newLogin + "' where login like '" + login + "'");
             System.out.println("Zmodyfikowano wiersze w liczbie: " + rowsAffected);
         }
@@ -58,7 +58,7 @@ public class BaseTest {
         database.disconnect();
     }
 
-    private String generateRandomString(int length, String chars) {
+    private String randomLoginEnd(int length, String chars) {
         StringBuilder sb = new StringBuilder(length);
         for (int i = 0; i < length; i++) {
             int index = random.nextInt(chars.length());

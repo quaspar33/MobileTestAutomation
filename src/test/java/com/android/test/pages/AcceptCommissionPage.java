@@ -17,7 +17,7 @@ public class AcceptCommissionPage extends AbstractPage {
         jsonHandler = new JsonHandler("accept_commission");
     }
 
-    private void sendDataToEndpoint() {
+    private void createCommissionEndpoint() {
         HttpClient client = HttpClient.newHttpClient();
 
         String jsonBody = jsonHandler.getStrFromJson("body");
