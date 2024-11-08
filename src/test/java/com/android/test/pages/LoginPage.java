@@ -63,8 +63,8 @@ public class LoginPage extends AbstractPage {
             List<String> tempList = queryForTempPassword.get();
 
             for (String s : tempList) {
-                System.out.println("Query result: " + s);
                 String[] tempParts = s.split(";");
+                System.out.println("Wynik zapytania: " + tempParts[0] + " " + tempParts[1]);
                 if (tempParts.length < 3) continue;
 
                 String tempDate = tempParts[1];
