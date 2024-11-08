@@ -34,7 +34,7 @@ public class ApiHandler {
         return response.body().isEmpty() ? "brak danych" : response.body();
     }
 
-    private void POST(String uri, String body, String auth) {
+    public void POST(String uri, String body, String auth) {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(uri))
                 .header("Content-Type", "application/hal+json")

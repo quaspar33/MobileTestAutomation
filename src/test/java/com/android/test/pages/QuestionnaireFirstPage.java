@@ -8,12 +8,9 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
-import java.math.BigInteger;
-import java.time.Duration;
 import java.time.LocalDate;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 public class QuestionnaireFirstPage extends AbstractPage {
@@ -29,7 +26,7 @@ public class QuestionnaireFirstPage extends AbstractPage {
         LocalDate currentDate = LocalDate.now();
         currentMonth = currentDate.getMonthValue();
         currentDay = currentDate.getDayOfMonth();
-        currentYear = currentDate.getYear() - 20;
+        currentYear = currentDate.getYear();
     }
 
     @AndroidFindBy(uiAutomator = "new UiSelector().text(\"Wypełnij kwestionariusz\")")
@@ -117,9 +114,12 @@ public class QuestionnaireFirstPage extends AbstractPage {
         wait.until(ExpectedConditions.visibilityOf(birthDate));
         birthDate.click();
         implicitWait(500, TimeUnit.MILLISECONDS);
+        By element;
         for (int i = 0; i < 20; i++) {
-            slideFromPoint(745, 1118, 745, 1249);
-            implicitWait(200, TimeUnit.MILLISECONDS);
+            element = By.xpath(String.format("//android.widget.EditText[@text=\"" + "%d" + "\"]", currentYear));
+            WebElement webElement = wait.until(ExpectedConditions.presenceOfElementLocated(element));
+            slideFromElement(webElement, 0, 140);
+            currentYear--;
         }
         birthDateOkButton.click();
     }
@@ -132,35 +132,34 @@ public class QuestionnaireFirstPage extends AbstractPage {
     }
 
     public void enterPesel() {
-        System.out.println(String.format("Generuje pesel dla daty: %d-%d-%d", currentYear, currentMonth, currentDay));
-        String generatedPesel = apiHandler.GET(String.format("https://generator.avris.it/api/PL/pesel?birthdate=%d-%02d-%02d&gender=m", currentYear-20, currentMonth, currentDay));
+        String peselStr = apiHandler.GET(String.format("https://generator.avris.it/api/PL/pesel?birthdate=%d-%02d-%02d&gender=m", currentYear, currentMonth, currentDay));
         wait.until(ExpectedConditions.visibilityOf(pesel));
-        pesel.sendKeys(generatedPesel.substring(1, generatedPesel.length() - 1));
+        pesel.sendKeys(peselStr.substring(1, peselStr.length() - 1));
     }
 
     public void enterName() {
         wait.until(ExpectedConditions.visibilityOf(name));
-        name.sendKeys("Java");
+        name.sendKeys("Test");
     }
 
     public void enterSurname() {
         wait.until(ExpectedConditions.visibilityOf(surname));
+        slideFromElement(surname, 0, -500);
         surname.sendKeys("Appium");
     }
 
     public void enterEmail() {
-        slideFromPoint(550, 999, 550, 500);
         wait.until(ExpectedConditions.visibilityOf(email));
         email.sendKeys(jsonHandler.getStrFromJson("email"));
     }
 
     public void enterPhoneNumber() {
         phoneNumber.sendKeys(jsonHandler.getStrFromJson("phoneNumber"));
-        slideFromPoint(516, 1913, 512, 471);
     }
 
     public void enterTaxOffice() {
         wait.until(ExpectedConditions.visibilityOf(taxOffice));
+        slideFromElement(taxOffice, 0, -1500);
         taxOffice.click();
         wait.until(ExpectedConditions.visibilityOf(taxOfficeName));
         taxOfficeName.click();
@@ -191,16 +190,15 @@ public class QuestionnaireFirstPage extends AbstractPage {
             wait.until(ExpectedConditions.visibilityOf(element));
             element.sendKeys(xPathText);
             elementScroll.click();
-            currentElement = By.xpath("//android.widget.TextView[@text=\"" + xPathText +"\"]");
-            wait.until(ExpectedConditions.presenceOfElementLocated(currentElement));
-            chooseElement = driver.findElement(currentElement);
+            currentElement = By.xpath("//android.widget.TextView[@text=\"" + xPathText + "\"]");
+            chooseElement = wait.until(ExpectedConditions.presenceOfElementLocated(currentElement));
             chooseElement.click();
-            slideFromPoint(491, 1380, 471, 676);
+            slideFromElement(chooseElement, 0, -600);
         }
 
         wait.until(ExpectedConditions.visibilityOf(buildingNumber));
+        slideFromElement(buildingNumber, 0, -600);
         buildingNumber.sendKeys(jsonHandler.getStrFromJson("buildingNumber"));
-        slideFromPoint(491, 1380, 471, 676);
     }
 
     public void setYesCheckbox() {

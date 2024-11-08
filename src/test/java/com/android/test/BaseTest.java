@@ -46,12 +46,13 @@ public class BaseTest {
 
         String checkDatabaseLogin = database.queryForLogin("select * from tikrow_dev.user where login like '" + login + "'");
 
-        System.out.println("Znaleziono dopasowanie: " + checkDatabaseLogin);
-
-        if (checkDatabaseLogin != null && !checkDatabaseLogin.isEmpty()) {
+        if (!checkDatabaseLogin.isEmpty()) {
+            System.out.println("Znaleziono dopasowanie: " + checkDatabaseLogin);
             String newLogin = login + randomLoginEnd(3, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789");
             int rowsAffected = database.executeUpdate("update tikrow_dev.user set login = '" + newLogin + "' where login like '" + login + "'");
             System.out.println("Zmodyfikowano wiersze w liczbie: " + rowsAffected);
+        } else {
+            System.out.println("Brak loginu w bazie");
         }
 
         database.disconnect();
