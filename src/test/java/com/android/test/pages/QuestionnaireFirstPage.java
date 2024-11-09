@@ -113,7 +113,6 @@ public class QuestionnaireFirstPage extends AbstractPage {
     public void enterBirthDate() {
         wait.until(ExpectedConditions.visibilityOf(birthDate));
         birthDate.click();
-        implicitWait(500, TimeUnit.MILLISECONDS);
         By element;
         for (int i = 0; i < 20; i++) {
             element = By.xpath(String.format("//android.widget.EditText[@text=\"" + "%d" + "\"]", currentYear));
@@ -134,27 +133,32 @@ public class QuestionnaireFirstPage extends AbstractPage {
     public void enterPesel() {
         String peselStr = apiHandler.GET(String.format("https://generator.avris.it/api/PL/pesel?birthdate=%d-%02d-%02d&gender=m", currentYear, currentMonth, currentDay));
         wait.until(ExpectedConditions.visibilityOf(pesel));
-        pesel.sendKeys(peselStr.substring(1, peselStr.length() - 1));
+        pesel.click();
+        realTyping(peselStr.substring(1, peselStr.length() - 1), false);
     }
 
     public void enterName() {
         wait.until(ExpectedConditions.visibilityOf(name));
-        name.sendKeys("Test");
+        name.click();
+        realTyping("Test", false);
     }
 
     public void enterSurname() {
         wait.until(ExpectedConditions.visibilityOf(surname));
         slideFromElement(surname, 0, -500);
-        surname.sendKeys("Appium");
+        surname.click();
+        realTyping("Appium", false);
     }
 
     public void enterEmail() {
         wait.until(ExpectedConditions.visibilityOf(email));
-        email.sendKeys(jsonHandler.getStrFromJson("email"));
+        email.click();
+        realTyping(jsonHandler.getStrFromJson("email"), false);
     }
 
     public void enterPhoneNumber() {
-        phoneNumber.sendKeys(jsonHandler.getStrFromJson("phoneNumber"));
+        phoneNumber.click();
+        realTyping("phoneNumber", true);
     }
 
     public void enterTaxOffice() {
@@ -167,32 +171,30 @@ public class QuestionnaireFirstPage extends AbstractPage {
 
     public void enterIban() {
         String ibanStr = apiHandler.GET("https://generator.avris.it/api/_/iban?country=PL");
-        iban.sendKeys(ibanStr.substring(3, ibanStr.length() - 1));
+        iban.click();
+        realTyping(ibanStr.substring(3, ibanStr.length() - 1), false);
     }
 
     public void enterAddress() {
         Map<WebElement[], String> adressMap = new LinkedHashMap<>() {{
-           put(new WebElement[]{postalCode, postalCodeScroll}, "postalCode");
-           put(new WebElement[]{cityName, cityNameScroll}, "cityName");
-           put(new WebElement[]{streetName, streetNameScroll}, "streetName");
+            put(new WebElement[]{postalCode, postalCodeScroll}, "postalCode");
+            put(new WebElement[]{cityName, cityNameScroll}, "cityName");
+            put(new WebElement[]{streetName, streetNameScroll}, "streetName");
         }};
 
-        WebElement element;
-        WebElement elementScroll;
-        String xPathText;
-        By currentElement;
-        WebElement chooseElement;
-
         for (Map.Entry<WebElement[], String> entry : adressMap.entrySet()) {
-            element = entry.getKey()[0];
-            elementScroll = entry.getKey()[1];
-            xPathText = jsonHandler.getStrFromJson(entry.getValue());
+            WebElement element = entry.getKey()[0];
+            WebElement elementScroll = entry.getKey()[1];
+            String xPathText = jsonHandler.getStrFromJson(entry.getValue());
+
             wait.until(ExpectedConditions.visibilityOf(element));
             element.sendKeys(xPathText);
             elementScroll.click();
-            currentElement = By.xpath("//android.widget.TextView[@text=\"" + xPathText + "\"]");
-            chooseElement = wait.until(ExpectedConditions.presenceOfElementLocated(currentElement));
+
+            By currentElement = By.xpath("//android.widget.TextView[@text=\"" + xPathText + "\"]");
+            WebElement chooseElement = wait.until(ExpectedConditions.presenceOfElementLocated(currentElement));
             chooseElement.click();
+
             slideFromElement(chooseElement, 0, -600);
         }
 
@@ -207,7 +209,12 @@ public class QuestionnaireFirstPage extends AbstractPage {
     }
 
     public void enterNextPage() {
-        implicitWait(10000, TimeUnit.MILLISECONDS);
+        try {
+            Thread.sleep(10000);
+            System.out.println("Śpię...");
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         nextPage.click();
     }
 }
