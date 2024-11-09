@@ -10,8 +10,8 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import java.time.LocalDate;
 import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.Map;
 
 public class QuestionnaireFirstPage extends AbstractPage {
     private JsonHandler jsonHandler;
@@ -134,31 +134,31 @@ public class QuestionnaireFirstPage extends AbstractPage {
         String peselStr = apiHandler.GET(String.format("https://generator.avris.it/api/PL/pesel?birthdate=%d-%02d-%02d&gender=m", currentYear, currentMonth, currentDay));
         wait.until(ExpectedConditions.visibilityOf(pesel));
         pesel.click();
-        realTyping(peselStr.substring(1, peselStr.length() - 1), false);
+        realTyping(peselStr.substring(1, peselStr.length() - 1));
     }
 
     public void enterName() {
         wait.until(ExpectedConditions.visibilityOf(name));
         name.click();
-        realTyping("Test", false);
+        realTyping("Test");
     }
 
     public void enterSurname() {
         wait.until(ExpectedConditions.visibilityOf(surname));
         slideFromElement(surname, 0, -500);
         surname.click();
-        realTyping("Appium", false);
+        realTyping("Appium");
     }
 
     public void enterEmail() {
         wait.until(ExpectedConditions.visibilityOf(email));
         email.click();
-        realTyping(jsonHandler.getStrFromJson("email"), false);
+        realTyping(jsonHandler.getStrFromJson("email"));
     }
 
     public void enterPhoneNumber() {
         phoneNumber.click();
-        realTyping("phoneNumber", true);
+        realTyping(jsonHandler.getStrFromJson("phoneNumber"));
     }
 
     public void enterTaxOffice() {
@@ -172,26 +172,22 @@ public class QuestionnaireFirstPage extends AbstractPage {
     public void enterIban() {
         String ibanStr = apiHandler.GET("https://generator.avris.it/api/_/iban?country=PL");
         iban.click();
-        realTyping(ibanStr.substring(3, ibanStr.length() - 1), false);
+        realTyping(ibanStr.substring(3, ibanStr.length() - 1));
     }
 
     public void enterAddress() {
-        Map<WebElement[], String> adressMap = new LinkedHashMap<>() {{
+        LinkedHashMap<WebElement[], String> adresMap = new LinkedHashMap<>() {{
             put(new WebElement[]{postalCode, postalCodeScroll}, "postalCode");
             put(new WebElement[]{cityName, cityNameScroll}, "cityName");
             put(new WebElement[]{streetName, streetNameScroll}, "streetName");
         }};
 
-        for (Map.Entry<WebElement[], String> entry : adressMap.entrySet()) {
-            WebElement element = entry.getKey()[0];
-            WebElement elementScroll = entry.getKey()[1];
-            String xPathText = jsonHandler.getStrFromJson(entry.getValue());
+        for (Map.Entry<WebElement[], String> entry : adresMap.entrySet()) {
+            wait.until(ExpectedConditions.visibilityOf(entry.getKey()[0]));
+            entry.getKey()[0].sendKeys(jsonHandler.getStrFromJson(entry.getValue()));
+            entry.getKey()[1].click();
 
-            wait.until(ExpectedConditions.visibilityOf(element));
-            element.sendKeys(xPathText);
-            elementScroll.click();
-
-            By currentElement = By.xpath("//android.widget.TextView[@text=\"" + xPathText + "\"]");
+            By currentElement = By.xpath("//android.widget.TextView[@text=\"" + jsonHandler.getStrFromJson(entry.getValue()) + "\"]");
             WebElement chooseElement = wait.until(ExpectedConditions.presenceOfElementLocated(currentElement));
             chooseElement.click();
 

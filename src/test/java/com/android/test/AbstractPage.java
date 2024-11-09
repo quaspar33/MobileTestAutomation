@@ -90,19 +90,6 @@ public abstract class AbstractPage {
         put("@", AndroidKey.AT);
     }};
 
-    private HashMap<String, AndroidKey> numpadMap = new HashMap<>() {{
-        put("0", AndroidKey.NUMPAD_0);
-        put("1", AndroidKey.NUMPAD_1);
-        put("2", AndroidKey.NUMPAD_2);
-        put("3", AndroidKey.NUMPAD_3);
-        put("4", AndroidKey.NUMPAD_4);
-        put("5", AndroidKey.NUMPAD_5);
-        put("6", AndroidKey.NUMPAD_6);
-        put("7", AndroidKey.NUMPAD_7);
-        put("8", AndroidKey.NUMPAD_8);
-        put("9", AndroidKey.NUMPAD_9);
-    }};
-
     public AbstractPage(AndroidDriver driver) {
         AbstractPage.driver = driver;
         PageFactory.initElements(new AppiumFieldDecorator(driver), this);
@@ -128,24 +115,13 @@ public abstract class AbstractPage {
         driver.manage().timeouts().implicitlyWait(count, timeUnit);
     }
 
-    public void realTyping(String text, boolean isNumpad) {
-        if (isNumpad) {
-            for (char c : text.toCharArray()) {
-                AndroidKey key = numpadMap.get(String.valueOf(c));
-                try {
-                    driver.pressKey(new KeyEvent(key));
-                } catch (NullPointerException e) {
-                    System.out.println(e.getMessage() + ", for key = " + key);
-                }
-            }
-        } else {
-            for (char c : text.toCharArray()) {
-                AndroidKey key = keyMap.get(String.valueOf(c));
-                try {
-                    driver.pressKey(new KeyEvent(key));
-                } catch (NullPointerException e) {
-                    System.out.println(e.getMessage() + ", for key = " + key);
-                }
+    public void realTyping(String text) {
+        for (char c : text.toCharArray()) {
+            AndroidKey key = keyMap.get(String.valueOf(c));
+            try {
+                driver.pressKey(new KeyEvent(key));
+            } catch (NullPointerException e) {
+                System.out.println(e.getMessage() + ", for char = " + c);
             }
         }
         driver.pressKey(new KeyEvent(AndroidKey.ENTER));
