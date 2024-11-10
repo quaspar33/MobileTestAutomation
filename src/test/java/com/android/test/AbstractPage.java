@@ -88,12 +88,13 @@ public abstract class AbstractPage {
         put("Z", AndroidKey.Z);
         put(".", AndroidKey.PERIOD);
         put("@", AndroidKey.AT);
+        put("-", AndroidKey.MINUS);
     }};
 
     public AbstractPage(AndroidDriver driver) {
         AbstractPage.driver = driver;
         PageFactory.initElements(new AppiumFieldDecorator(driver), this);
-        wait = new WebDriverWait(driver, Duration.ofSeconds(15));
+        wait = new WebDriverWait(driver, Duration.ofSeconds(20));
         actions = new Actions(driver);
         database = new Database();
         apiHandler = new ApiHandler();

@@ -71,26 +71,14 @@ public class QuestionnaireFirstPage extends AbstractPage {
     @AndroidFindBy(uiAutomator = "new UiSelector().className(\"android.widget.EditText\").instance(2)")
     private WebElement postalCode;
 
-    @AndroidFindBy(uiAutomator = "new UiSelector().className(\"com.horcrux.svg.SvgView\").instance(4)")
-    private WebElement postalCodeScroll;
-
     @AndroidFindBy(uiAutomator = "new UiSelector().className(\"android.widget.EditText\").instance(3)")
     private WebElement cityName;
-
-    @AndroidFindBy(uiAutomator = "new UiSelector().className(\"com.horcrux.svg.SvgView\").instance(6)")
-    private WebElement cityNameScroll;
 
     @AndroidFindBy(uiAutomator = "new UiSelector().className(\"android.widget.EditText\").instance(4)")
     private WebElement streetName;
 
-    @AndroidFindBy(uiAutomator = "new UiSelector().className(\"com.horcrux.svg.SvgView\").instance(8)")
-    private WebElement streetNameScroll;
-
     @AndroidFindBy(uiAutomator = "new UiSelector().text(\"Nr budynku\")")
     private WebElement buildingNumber;
-
-    @AndroidFindBy(uiAutomator = "new UiSelector().text(\"12\")")
-    WebElement buildingNumberScroll;
 
     @AndroidFindBy(uiAutomator = "new UiSelector().className(\"android.view.ViewGroup\").instance(51)")
     private WebElement yesCheckbox;
@@ -114,7 +102,7 @@ public class QuestionnaireFirstPage extends AbstractPage {
         wait.until(ExpectedConditions.visibilityOf(birthDate));
         birthDate.click();
         By element;
-        for (int i = 0; i < 20; i++) {
+        while (LocalDate.now().getYear() - currentYear < 18) {
             element = By.xpath(String.format("//android.widget.EditText[@text=\"" + "%d" + "\"]", currentYear));
             WebElement webElement = wait.until(ExpectedConditions.presenceOfElementLocated(element));
             slideFromElement(webElement, 0, 140);
@@ -157,6 +145,7 @@ public class QuestionnaireFirstPage extends AbstractPage {
     }
 
     public void enterPhoneNumber() {
+        slideFromElement(phoneNumber, 0, -200);
         phoneNumber.click();
         realTyping(jsonHandler.getStrFromJson("phoneNumber"));
     }
@@ -172,31 +161,32 @@ public class QuestionnaireFirstPage extends AbstractPage {
     public void enterIban() {
         String ibanStr = apiHandler.GET("https://generator.avris.it/api/_/iban?country=PL");
         iban.click();
-        realTyping(ibanStr.substring(3, ibanStr.length() - 1));
+        String ibanStrParsed = ibanStr.substring(3, ibanStr.length() - 1).replace(" ", "");
+        realTyping(ibanStrParsed);
+        slideFromElement(wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//android.widget.EditText[@text=\"" + ibanStrParsed + "\"]"))), 0, -500);
     }
 
     public void enterAddress() {
-        LinkedHashMap<WebElement[], String> adresMap = new LinkedHashMap<>() {{
-            put(new WebElement[]{postalCode, postalCodeScroll}, "postalCode");
-            put(new WebElement[]{cityName, cityNameScroll}, "cityName");
-            put(new WebElement[]{streetName, streetNameScroll}, "streetName");
+        LinkedHashMap<WebElement, String> adresMap = new LinkedHashMap<>() {{
+            put(postalCode, "postalCode");
+            put(cityName, "cityName");
+            put(streetName, "streetName");
         }};
 
-        for (Map.Entry<WebElement[], String> entry : adresMap.entrySet()) {
-            wait.until(ExpectedConditions.visibilityOf(entry.getKey()[0]));
-            entry.getKey()[0].sendKeys(jsonHandler.getStrFromJson(entry.getValue()));
-            entry.getKey()[1].click();
+        for (Map.Entry<WebElement, String> entry : adresMap.entrySet()) {
+            wait.until(ExpectedConditions.visibilityOf(entry.getKey()));
+            entry.getKey().click();
+            realTyping(jsonHandler.getStrFromJson(entry.getValue()));
 
-            By currentElement = By.xpath("//android.widget.TextView[@text=\"" + jsonHandler.getStrFromJson(entry.getValue()) + "\"]");
-            WebElement chooseElement = wait.until(ExpectedConditions.presenceOfElementLocated(currentElement));
-            chooseElement.click();
+            wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//android.widget.TextView[@text=\"" + jsonHandler.getStrFromJson(entry.getValue()) + "\"]"))).click();
 
-            slideFromElement(chooseElement, 0, -600);
+            slideFromElement(wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//android.widget.EditText[@text=\"" + jsonHandler.getStrFromJson(entry.getValue()) + "\"]"))), 0, -600);
         }
 
         wait.until(ExpectedConditions.visibilityOf(buildingNumber));
         slideFromElement(buildingNumber, 0, -600);
-        buildingNumber.sendKeys(jsonHandler.getStrFromJson("buildingNumber"));
+        buildingNumber.click();
+        realTyping(jsonHandler.getStrFromJson("buildingNumber"));
     }
 
     public void setYesCheckbox() {
@@ -206,11 +196,12 @@ public class QuestionnaireFirstPage extends AbstractPage {
 
     public void enterNextPage() {
         try {
-            Thread.sleep(10000);
             System.out.println("Śpię...");
+            Thread.sleep(10000);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
+        System.out.println("Budzę się!");
         nextPage.click();
     }
 }
