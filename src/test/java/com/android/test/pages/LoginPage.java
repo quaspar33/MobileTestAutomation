@@ -41,10 +41,7 @@ public class LoginPage extends AbstractPage {
     public void enterPhoneNumber() {
         System.out.println("Rozpoczynam test logowania!");
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
-        wait.until(ExpectedConditions.visibilityOf(phoneNumberField));
-        String login = jsonHandler.getStrFromJson("phoneNumber");
-        assertNotNull(login);
-        phoneNumberField.sendKeys(login);
+        wait.until(ExpectedConditions.visibilityOf(phoneNumberField)).sendKeys(jsonHandler.getStrFromJson("phoneNumber"));
     }
 
     public void enterPassword(LocalDateTime registerTime) {

@@ -47,12 +47,10 @@ public class RegisterPage extends AbstractPage {
 
     public void enterPhoneNumber() {
         System.out.println("Rozpoczynam test rejestracji!");
-        wait.until(ExpectedConditions.visibilityOf(phoneNumberField));
-        phoneNumberField.sendKeys(jsonHandler.getStrFromJson("login"));
+        wait.until(ExpectedConditions.visibilityOf(phoneNumberField)).sendKeys(jsonHandler.getStrFromJson("login"));
     }
 
     public void enterPostalCode() {
-        postalCodeField.clear();
         postalCodeField.sendKeys(jsonHandler.getStrFromJson("postalCode"));
     }
 

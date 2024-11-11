@@ -12,6 +12,7 @@ import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
@@ -22,6 +23,9 @@ public abstract class AbstractPage {
     public static Actions actions;
     public static Database database;
     public static ApiHandler apiHandler;
+    public static int currentMonth;
+    public static int currentDay;
+    public static int currentYear;
 
     private HashMap<String, AndroidKey> keyMap = new HashMap<>() {{
         put("0", AndroidKey.DIGIT_0);
@@ -98,6 +102,10 @@ public abstract class AbstractPage {
         actions = new Actions(driver);
         database = new Database();
         apiHandler = new ApiHandler();
+        LocalDate currentDate = LocalDate.now();
+        currentMonth = currentDate.getMonthValue();
+        currentDay = currentDate.getDayOfMonth();
+        currentYear = currentDate.getYear();
     }
 
     public void slideFromElement(WebElement element, int xOffset, int yOffset) {

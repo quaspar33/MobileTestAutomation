@@ -15,18 +15,12 @@ import java.util.Map;
 
 public class QuestionnaireFirstPage extends AbstractPage {
     private JsonHandler jsonHandler;
-    private int currentMonth;
-    private int currentDay;
-    private int currentYear;
-
-
+    private int birthYear;
+    
     public QuestionnaireFirstPage(AndroidDriver driver) {
         super(driver);
         jsonHandler = new JsonHandler("questionnaire_first.json");
-        LocalDate currentDate = LocalDate.now();
-        currentMonth = currentDate.getMonthValue();
-        currentDay = currentDate.getDayOfMonth();
-        currentYear = currentDate.getYear();
+        birthYear = currentYear;
     }
 
     @AndroidFindBy(uiAutomator = "new UiSelector().text(\"Wypełnij kwestionariusz\")")
@@ -71,10 +65,10 @@ public class QuestionnaireFirstPage extends AbstractPage {
     @AndroidFindBy(uiAutomator = "new UiSelector().className(\"android.widget.EditText\").instance(2)")
     private WebElement postalCode;
 
-    @AndroidFindBy(uiAutomator = "new UiSelector().className(\"android.widget.EditText\").instance(3)")
+    @AndroidFindBy(uiAutomator = "new UiSelector().className(\"android.widget.EditText\").instance(2)")
     private WebElement cityName;
 
-    @AndroidFindBy(uiAutomator = "new UiSelector().className(\"android.widget.EditText\").instance(4)")
+    @AndroidFindBy(uiAutomator = "new UiSelector().className(\"android.widget.EditText\").instance(2)")
     private WebElement streetName;
 
     @AndroidFindBy(uiAutomator = "new UiSelector().text(\"Nr budynku\")")
@@ -94,40 +88,34 @@ public class QuestionnaireFirstPage extends AbstractPage {
 
     public void clickFillQuestionnaire() {
         System.out.println("Rozpoczynam wypełnianie pierwszej strony kwestionariusza!");
-        wait.until(ExpectedConditions.visibilityOf(fillQuestionnaire));
-        fillQuestionnaire.click();
+        wait.until(ExpectedConditions.visibilityOf(fillQuestionnaire)).click();
     }
 
     public void enterBirthDate() {
-        wait.until(ExpectedConditions.visibilityOf(birthDate));
-        birthDate.click();
+        wait.until(ExpectedConditions.visibilityOf(birthDate)).click();
         By element;
-        while (LocalDate.now().getYear() - currentYear < 18) {
-            element = By.xpath(String.format("//android.widget.EditText[@text=\"" + "%d" + "\"]", currentYear));
+        while (LocalDate.now().getYear() - birthYear < 18) {
+            element = By.xpath(String.format("//android.widget.EditText[@text=\"" + "%d" + "\"]", birthYear));
             WebElement webElement = wait.until(ExpectedConditions.presenceOfElementLocated(element));
             slideFromElement(webElement, 0, 140);
-            currentYear--;
+            birthYear--;
         }
         birthDateOkButton.click();
     }
 
     public void enterCountry() {
-        wait.until(ExpectedConditions.visibilityOf(country));
-        country.click();
-        wait.until(ExpectedConditions.visibilityOf(chooseCountry));
-        chooseCountry.click();
+        wait.until(ExpectedConditions.visibilityOf(country)).click();
+        wait.until(ExpectedConditions.visibilityOf(chooseCountry)).click();
     }
 
     public void enterPesel() {
-        String peselStr = apiHandler.GET(String.format("https://generator.avris.it/api/PL/pesel?birthdate=%d-%02d-%02d&gender=m", currentYear, currentMonth, currentDay));
-        wait.until(ExpectedConditions.visibilityOf(pesel));
-        pesel.click();
+        String peselStr = apiHandler.GET(String.format("https://generator.avris.it/api/PL/pesel?birthdate=%d-%02d-%02d&gender=m", birthYear, currentMonth, currentDay));
+        wait.until(ExpectedConditions.visibilityOf(pesel)).click();
         realTyping(peselStr.substring(1, peselStr.length() - 1));
     }
 
     public void enterName() {
-        wait.until(ExpectedConditions.visibilityOf(name));
-        name.click();
+        wait.until(ExpectedConditions.visibilityOf(name)).click();
         realTyping("Test");
     }
 
@@ -139,8 +127,7 @@ public class QuestionnaireFirstPage extends AbstractPage {
     }
 
     public void enterEmail() {
-        wait.until(ExpectedConditions.visibilityOf(email));
-        email.click();
+        wait.until(ExpectedConditions.visibilityOf(email)).click();
         realTyping(jsonHandler.getStrFromJson("email"));
     }
 
@@ -154,8 +141,7 @@ public class QuestionnaireFirstPage extends AbstractPage {
         wait.until(ExpectedConditions.visibilityOf(taxOffice));
         slideFromElement(taxOffice, 0, -1500);
         taxOffice.click();
-        wait.until(ExpectedConditions.visibilityOf(taxOfficeName));
-        taxOfficeName.click();
+        wait.until(ExpectedConditions.visibilityOf(taxOfficeName)).click();
     }
 
     public void enterIban() {
@@ -171,27 +157,22 @@ public class QuestionnaireFirstPage extends AbstractPage {
             put(postalCode, "postalCode");
             put(cityName, "cityName");
             put(streetName, "streetName");
+            put(buildingNumber, "buildingNumber");
         }};
 
-        for (Map.Entry<WebElement, String> entry : adresMap.entrySet()) {
-            wait.until(ExpectedConditions.visibilityOf(entry.getKey()));
-            entry.getKey().click();
-            realTyping(jsonHandler.getStrFromJson(entry.getValue()));
+        adresMap.forEach((key, value) -> {
+            wait.until(ExpectedConditions.visibilityOf(key)).click();
+            realTyping(jsonHandler.getStrFromJson(value));
+            if (!value.equals("buildingNumber")) {
+                wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//android.widget.TextView[@text=\"" + jsonHandler.getStrFromJson(value) + "\"]"))).click();
+            }
+            slideFromElement(wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//android.widget.EditText[@text=\"" + jsonHandler.getStrFromJson(value) + "\"]"))), 0, -600);
+        });
 
-            wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//android.widget.TextView[@text=\"" + jsonHandler.getStrFromJson(entry.getValue()) + "\"]"))).click();
-
-            slideFromElement(wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//android.widget.EditText[@text=\"" + jsonHandler.getStrFromJson(entry.getValue()) + "\"]"))), 0, -600);
-        }
-
-        wait.until(ExpectedConditions.visibilityOf(buildingNumber));
-        slideFromElement(buildingNumber, 0, -600);
-        buildingNumber.click();
-        realTyping(jsonHandler.getStrFromJson("buildingNumber"));
     }
 
     public void setYesCheckbox() {
-        wait.until(ExpectedConditions.visibilityOf(yesCheckbox));
-        yesCheckbox.click();
+        wait.until(ExpectedConditions.visibilityOf(yesCheckbox)).click();
     }
 
     public void enterNextPage() {
