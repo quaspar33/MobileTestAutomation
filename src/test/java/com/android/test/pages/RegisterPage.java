@@ -19,6 +19,7 @@ public class RegisterPage extends AbstractPage {
     public RegisterPage(AndroidDriver driver) {
         super(driver);
         jsonHandler = new JsonHandler("register.json");
+        System.out.println("Rozpoczynam test rejestracji!");
     }
 
     @AndroidFindBy(uiAutomator = "new UiSelector().text(\"Załóż konto\")")
@@ -46,7 +47,6 @@ public class RegisterPage extends AbstractPage {
     }
 
     public void enterPhoneNumber() {
-        System.out.println("Rozpoczynam test rejestracji!");
         wait.until(ExpectedConditions.visibilityOf(phoneNumberField)).sendKeys(jsonHandler.getStrFromJson("login"));
     }
 

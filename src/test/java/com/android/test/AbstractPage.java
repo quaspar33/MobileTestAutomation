@@ -25,6 +25,7 @@ public abstract class AbstractPage {
     public static Actions actions;
     public static Database database;
     public static ApiHandler apiHandler;
+    public static LocalDate currentDate;
     public static int currentMonth;
     public static int currentDay;
     public static int currentYear;
@@ -104,7 +105,7 @@ public abstract class AbstractPage {
         actions = new Actions(driver);
         database = new Database();
         apiHandler = new ApiHandler();
-        LocalDate currentDate = LocalDate.now();
+        currentDate = LocalDate.now();
         currentMonth = currentDate.getMonthValue();
         currentDay = currentDate.getDayOfMonth();
         currentYear = currentDate.getYear();

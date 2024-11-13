@@ -9,6 +9,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 public class QuestionnaireSecondPage extends AbstractPage {
     public QuestionnaireSecondPage(AndroidDriver driver) {
         super(driver);
+        System.out.println("Rozpoczynam wypełnianie drugiej strony kwestionariusza!");
     }
 
     @AndroidFindBy(uiAutomator = "new UiSelector().className(\"android.view.ViewGroup\").instance(38)")
@@ -18,7 +19,6 @@ public class QuestionnaireSecondPage extends AbstractPage {
     private WebElement nextPage;
 
     public void enterUnemployedCheckbox() {
-        System.out.println("Rozpoczynam wypełnianie drugiej strony kwestionariusza!");
         wait.until(ExpectedConditions.visibilityOf(unemployedCheckbox)).click();
     }
 

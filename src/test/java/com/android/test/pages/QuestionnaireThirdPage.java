@@ -9,6 +9,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 public class QuestionnaireThirdPage extends AbstractPage {
     public QuestionnaireThirdPage(AndroidDriver driver) {
         super(driver);
+        System.out.println("Rozpoczynam wypełnianie trzeciej strony kwestionariusza!");
     }
 
     @AndroidFindBy(uiAutomator = "new UiSelector().className(\"android.view.ViewGroup\").instance(34)")
@@ -18,7 +19,6 @@ public class QuestionnaireThirdPage extends AbstractPage {
     private WebElement endQuestionnaire;
 
     public void enterConfirmation() {
-        System.out.println("Rozpoczynam wypełnianie trzeciej strony kwestionariusza!");
         wait.until(ExpectedConditions.visibilityOf(confirmation)).click();
     }
 

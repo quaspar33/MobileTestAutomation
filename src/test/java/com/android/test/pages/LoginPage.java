@@ -19,14 +19,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static org.testng.Assert.assertNotNull;
-
 public class LoginPage extends AbstractPage {
     private JsonHandler jsonHandler;
 
     public LoginPage(AndroidDriver driver) {
         super(driver);
         jsonHandler = new JsonHandler("login.json");
+        System.out.println("Rozpoczynam test logowania!");
     }
 
     @AndroidFindBy(uiAutomator = "new UiSelector().text(\"Numer telefonu\")")
@@ -39,7 +38,6 @@ public class LoginPage extends AbstractPage {
     private WebElement loginButton;
 
     public void enterPhoneNumber() {
-        System.out.println("Rozpoczynam test logowania!");
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
         wait.until(ExpectedConditions.visibilityOf(phoneNumberField)).sendKeys(jsonHandler.getStrFromJson("phoneNumber"));
     }

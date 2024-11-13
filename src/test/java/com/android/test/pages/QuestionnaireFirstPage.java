@@ -16,11 +16,12 @@ import java.util.Map;
 public class QuestionnaireFirstPage extends AbstractPage {
     private JsonHandler jsonHandler;
     private int birthYear;
-    
+
     public QuestionnaireFirstPage(AndroidDriver driver) {
         super(driver);
         jsonHandler = new JsonHandler("questionnaire_first.json");
         birthYear = currentYear;
+        System.out.println("Rozpoczynam wypełnianie pierwszej strony kwestionariusza!");
     }
 
     @AndroidFindBy(uiAutomator = "new UiSelector().text(\"Wypełnij kwestionariusz\")")
@@ -86,8 +87,7 @@ public class QuestionnaireFirstPage extends AbstractPage {
     @AndroidFindBy(uiAutomator = "new UiSelector().text(\"Dalej\")")
     private WebElement nextPage;
 
-    public void clickFillQuestionnaire() {
-        System.out.println("Rozpoczynam wypełnianie pierwszej strony kwestionariusza!");
+    public void clickQuestionnaire() {
         wait.until(ExpectedConditions.visibilityOf(fillQuestionnaire)).click();
     }
 
@@ -171,7 +171,7 @@ public class QuestionnaireFirstPage extends AbstractPage {
 
     }
 
-    public void setYesCheckbox() {
+    public void setCheckbox() {
         wait.until(ExpectedConditions.visibilityOf(yesCheckbox)).click();
     }
 

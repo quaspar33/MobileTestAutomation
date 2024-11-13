@@ -17,7 +17,7 @@ public class QuestionnaireFirstTest extends AbstractTest {
 
     @Test(groups = "questionnaireFirst", dependsOnGroups = "login")
     public void questionnaireFirstTest() {
-        questionnaireFirstPage.clickFillQuestionnaire();
+        questionnaireFirstPage.clickQuestionnaire();
         questionnaireFirstPage.enterBirthDate();
         questionnaireFirstPage.enterCountry();
         questionnaireFirstPage.enterPesel();
@@ -28,7 +28,7 @@ public class QuestionnaireFirstTest extends AbstractTest {
         questionnaireFirstPage.enterTaxOffice();
         questionnaireFirstPage.enterIban();
         questionnaireFirstPage.enterAddress();
-        questionnaireFirstPage.setYesCheckbox();
+        questionnaireFirstPage.setCheckbox();
         questionnaireFirstPage.enterNextPage();
     }
 }
