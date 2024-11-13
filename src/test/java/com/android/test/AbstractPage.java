@@ -3,6 +3,8 @@ package com.android.test;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.android.nativekey.AndroidKey;
 import io.appium.java_client.android.nativekey.KeyEvent;
+import io.appium.java_client.android.nativekey.KeyEventFlag;
+import io.appium.java_client.android.nativekey.KeyEventMetaModifier;
 import io.appium.java_client.pagefactory.AppiumFieldDecorator;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
@@ -98,7 +100,7 @@ public abstract class AbstractPage {
     public AbstractPage(AndroidDriver driver) {
         AbstractPage.driver = driver;
         PageFactory.initElements(new AppiumFieldDecorator(driver), this);
-        wait = new WebDriverWait(driver, Duration.ofSeconds(20));
+        wait = new WebDriverWait(driver, Duration.ofSeconds(15));
         actions = new Actions(driver);
         database = new Database();
         apiHandler = new ApiHandler();
@@ -120,15 +122,24 @@ public abstract class AbstractPage {
         driver.perform(Collections.singletonList(swipe));
     }
 
-    public void implicitWait(int count, TimeUnit timeUnit) {
-        driver.manage().timeouts().implicitlyWait(count, timeUnit);
+    public void implicitWait(long millis) {
+        try {
+            Thread.sleep(millis);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     public void realTyping(String text) {
+        implicitWait(200);
         for (char c : text.toCharArray()) {
             AndroidKey key = keyMap.get(String.valueOf(c));
             try {
-                driver.pressKey(new KeyEvent(key));
+                if (Character.isUpperCase(c)) {
+                    driver.pressKey(new KeyEvent(key).withMetaModifier(KeyEventMetaModifier.CAPS_LOCK_ON));
+                } else {
+                    driver.pressKey(new KeyEvent(key));
+                }
             } catch (NullPointerException e) {
                 System.out.println(e.getMessage() + ", for char = " + c);
             }

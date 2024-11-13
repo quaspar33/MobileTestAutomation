@@ -161,6 +161,7 @@ public class QuestionnaireFirstPage extends AbstractPage {
         }};
 
         adresMap.forEach((key, value) -> {
+            System.out.println("Czekam na widoczność: " + value);
             wait.until(ExpectedConditions.visibilityOf(key)).click();
             realTyping(jsonHandler.getStrFromJson(value));
             if (!value.equals("buildingNumber")) {
@@ -176,12 +177,8 @@ public class QuestionnaireFirstPage extends AbstractPage {
     }
 
     public void enterNextPage() {
-        try {
-            System.out.println("Śpię...");
-            Thread.sleep(10000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+        System.out.println("Śpię...");
+        implicitWait(10000);
         System.out.println("Budzę się!");
         nextPage.click();
     }
