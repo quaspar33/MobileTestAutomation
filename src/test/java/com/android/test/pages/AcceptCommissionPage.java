@@ -49,7 +49,7 @@ public class AcceptCommissionPage extends AbstractPage {
 
     public AcceptCommissionPage(AndroidDriver driver) {
         super(driver);
-        jsonHandler = new JsonHandler("accept_commission");
+        jsonHandler = new JsonHandler("accept_commission.json");
         commissionDay = currentDay + 2;
         apiHandler.POST(
                 jsonHandler.getStrFromJson("uri"),

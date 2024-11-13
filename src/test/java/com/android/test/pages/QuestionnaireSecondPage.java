@@ -23,7 +23,7 @@ public class QuestionnaireSecondPage extends AbstractPage {
     }
 
     public void enterNextPage() {
-        implicitWait(1000);
+        implicitWait(3000);
         nextPage.click();
     }
 }

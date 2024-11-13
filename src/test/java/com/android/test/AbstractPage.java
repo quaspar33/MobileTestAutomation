@@ -125,6 +125,7 @@ public abstract class AbstractPage {
 
     public void implicitWait(long millis) {
         try {
+            System.out.println("Czekam...");
             Thread.sleep(millis);
         } catch (InterruptedException e) {
             e.printStackTrace();

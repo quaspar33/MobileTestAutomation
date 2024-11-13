@@ -3,7 +3,8 @@ package com.android.test;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.remote.MobileCapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
-import org.testng.annotations.*;
+import org.testng.annotations.AfterSuite;
+import org.testng.annotations.BeforeSuite;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -13,7 +14,7 @@ import java.util.Random;
 public class BaseTest {
     public static AndroidDriver driver;
     private Database database;
-    private JsonHandler jsonHandler;
+    private JsonHandler jsonHandlerDatabase;
     private static LocalDateTime registerTime;
 
     @BeforeSuite
@@ -39,9 +40,9 @@ public class BaseTest {
     }
 
     private void databaseSetup() {
-        jsonHandler = new JsonHandler("base.json");
+        jsonHandlerDatabase = new JsonHandler("base.json");
         database = new Database();
-        String login = jsonHandler.getStrFromJson("login");
+        String login = jsonHandlerDatabase.getStrFromJson("login");
         database.connect();
 
         String checkDatabaseLogin = database.queryForLogin("select * from tikrow_dev.user where login like '" + login + "'");
