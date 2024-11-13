@@ -53,10 +53,10 @@ public class QuestionnaireFirstPage extends AbstractPage {
     @AndroidFindBy(uiAutomator = "new UiSelector().text(\"123456789\")")
     private WebElement phoneNumber;
 
-    @AndroidFindBy(uiAutomator = "new UiSelector().className(\"com.horcrux.svg.SvgView\").instance(2)")
+    @AndroidFindBy(uiAutomator = "new UiSelector().className(\"com.horcrux.svg.PathView\").instance(2)")
     private WebElement taxOffice;
 
-    @AndroidFindBy(uiAutomator = "new UiSelector().className(\"android.view.ViewGroup\").instance(62)")
+    @AndroidFindBy(uiAutomator = "new UiSelector().text(\"Urząd Skarbowy Poznań-Wilda 61-558, Dolna Wilda 80\").instance(0)")
     private WebElement taxOfficeName;
 
     @AndroidFindBy(uiAutomator = "new UiSelector().text(\"Nr rachunku bankowego\")")
@@ -161,7 +161,6 @@ public class QuestionnaireFirstPage extends AbstractPage {
         }};
 
         adresMap.forEach((key, value) -> {
-            System.out.println("Czekam na widoczność: " + value);
             wait.until(ExpectedConditions.visibilityOf(key)).click();
             realTyping(jsonHandler.getStrFromJson(value));
             if (!value.equals("buildingNumber")) {
@@ -177,9 +176,6 @@ public class QuestionnaireFirstPage extends AbstractPage {
     }
 
     public void enterNextPage() {
-        System.out.println("Śpię...");
-        implicitWait(10000);
-        System.out.println("Budzę się!");
-        nextPage.click();
+        wait.until(ExpectedConditions.elementToBeClickable(nextPage)).click();
     }
 }

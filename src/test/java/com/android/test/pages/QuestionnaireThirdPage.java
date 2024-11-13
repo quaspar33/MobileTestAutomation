@@ -11,7 +11,7 @@ public class QuestionnaireThirdPage extends AbstractPage {
         super(driver);
     }
 
-    @AndroidFindBy(uiAutomator = "new UiSelector().className(\"android.view.ViewGroup\").instance(37)")
+    @AndroidFindBy(uiAutomator = "new UiSelector().className(\"android.view.ViewGroup\").instance(34)")
     private WebElement confirmation;
 
     @AndroidFindBy(uiAutomator = "new UiSelector().text(\"Zakończ\")")
@@ -19,11 +19,11 @@ public class QuestionnaireThirdPage extends AbstractPage {
 
     public void enterConfirmation() {
         System.out.println("Rozpoczynam wypełnianie trzeciej strony kwestionariusza!");
-        wait.until(ExpectedConditions.visibilityOf(confirmation));
-        confirmation.click();
+        wait.until(ExpectedConditions.visibilityOf(confirmation)).click();
     }
 
     public void enterEndQuestionnaire() {
+        implicitWait(1000);
         endQuestionnaire.click();
     }
 }

@@ -19,11 +19,11 @@ public class QuestionnaireSecondPage extends AbstractPage {
 
     public void enterUnemployedCheckbox() {
         System.out.println("Rozpoczynam wypełnianie drugiej strony kwestionariusza!");
-        wait.until(ExpectedConditions.visibilityOf(unemployedCheckbox));
-        unemployedCheckbox.click();
+        wait.until(ExpectedConditions.visibilityOf(unemployedCheckbox)).click();
     }
 
     public void enterNextPage() {
+        implicitWait(1000);
         nextPage.click();
     }
 }
