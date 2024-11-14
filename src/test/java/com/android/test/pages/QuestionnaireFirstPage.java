@@ -92,7 +92,7 @@ public class QuestionnaireFirstPage extends AbstractPage {
     public void enterBirthDate() {
         wait.until(ExpectedConditions.visibilityOf(birthDate)).click();
         By element;
-        while (LocalDate.now().getYear() - birthYear < 18) {
+        while (currentDate.getYear() - birthYear < 18) {
             element = By.xpath(String.format("//android.widget.EditText[@text=\"%d\"]", birthYear));
             WebElement webElement = wait.until(ExpectedConditions.presenceOfElementLocated(element));
             slideFromElement(webElement, 0, 140);
@@ -151,14 +151,14 @@ public class QuestionnaireFirstPage extends AbstractPage {
     }
 
     public void enterAddress() {
-        LinkedHashMap<WebElement, String> adresMap = new LinkedHashMap<>() {{
+        LinkedHashMap<WebElement, String> addressMap = new LinkedHashMap<>() {{
             put(postalCode, "postalCode");
             put(cityName, "cityName");
             put(streetName, "streetName");
             put(buildingNumber, "buildingNumber");
         }};
 
-        adresMap.forEach((key, value) -> {
+        addressMap.forEach((key, value) -> {
             wait.until(ExpectedConditions.elementToBeClickable(key)).click();
             realTyping(jsonHandler.getStrFromJson(value));
             if (!value.equals("buildingNumber")) {

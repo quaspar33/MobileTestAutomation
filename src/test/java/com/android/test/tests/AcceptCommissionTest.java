@@ -15,7 +15,7 @@ public class AcceptCommissionTest extends AbstractTest {
         acceptCommissionPage = new AcceptCommissionPage(driver);
     }
 
-    @Test(groups = "acceptCommission", dependsOnGroups = "questionnaireThird")
+    @Test(groups = "acceptCommission", dependsOnGroups = "verifyPartner")
     public void acceptCommissionTest() {
         acceptCommissionPage.clickCommission();
         acceptCommissionPage.acceptCommission();

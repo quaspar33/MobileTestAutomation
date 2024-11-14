@@ -23,3 +23,4 @@
 *.swo
 *.json
 
+/src/test/java/com/android/test/resources/geckodriver

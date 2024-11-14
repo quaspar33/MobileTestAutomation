@@ -6,7 +6,6 @@ import io.appium.java_client.android.nativekey.KeyEvent;
 import io.appium.java_client.android.nativekey.KeyEventMetaModifier;
 import io.appium.java_client.pagefactory.AppiumFieldDecorator;
 import org.openqa.selenium.Point;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.interactions.PointerInput;
@@ -123,12 +122,12 @@ public abstract class AbstractPage {
 
         driver.perform(Collections.singletonList(swipe));
 
-        while (!isStable(element)) {
+        while (!isElementStable(element)) {
             System.out.println("Czekam aż obraz się ustabilizuje po slidzie...");
         }
     }
 
-    private boolean isStable(WebElement element) {
+    private boolean isElementStable(WebElement element) {
         Point firstLocation = element.getLocation();
         try {
             Thread.sleep(200);
