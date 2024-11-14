@@ -23,7 +23,7 @@ public class ApiHandler {
         try {
             response = client.send(request, HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() == 200) {
-                System.out.println("Udało się pobrać dane z endpointu: " + response.body());
+                System.out.println("Udało się pobrać dane: " + response.body() + ", z endpointu: " + uri);
             } else {
                 System.out.println("Nie udało się pobrać danych z endpointu.");
             }

@@ -108,7 +108,7 @@ public class QuestionnaireFirstPage extends AbstractPage {
 
     public void enterPesel() {
         String peselStr = apiHandler.GET(String.format("https://generator.avris.it/api/PL/pesel?birthdate=%d-%02d-%02d&gender=m", birthYear, currentMonth, currentDay));
-        wait.until(ExpectedConditions.visibilityOf(pesel)).click();
+        wait.until(ExpectedConditions.elementToBeClickable(pesel)).click();
         realTyping(peselStr.substring(1, peselStr.length() - 1));
     }
 

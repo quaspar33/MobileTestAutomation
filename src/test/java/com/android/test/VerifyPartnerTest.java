@@ -26,6 +26,7 @@ public class VerifyPartnerTest {
         driver.manage().window().maximize();
         driver.get(jsonHandler.getStrFromJson("url"));
         wait = new WebDriverWait(driver, Duration.ofSeconds(15));
+        System.out.println("Rozpoczynam test zaakceptowania kwestionariusza!");
     }
 
     @AfterClass
