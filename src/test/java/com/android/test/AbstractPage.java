@@ -3,9 +3,10 @@ package com.android.test;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.android.nativekey.AndroidKey;
 import io.appium.java_client.android.nativekey.KeyEvent;
-import io.appium.java_client.android.nativekey.KeyEventFlag;
 import io.appium.java_client.android.nativekey.KeyEventMetaModifier;
 import io.appium.java_client.pagefactory.AppiumFieldDecorator;
+import org.openqa.selenium.Point;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.interactions.PointerInput;
@@ -17,7 +18,6 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.concurrent.TimeUnit;
 
 public abstract class AbstractPage {
     public static AndroidDriver driver;
@@ -114,18 +114,34 @@ public abstract class AbstractPage {
     public void slideFromElement(WebElement element, int xOffset, int yOffset) {
         PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
         Sequence swipe = new Sequence(finger, 0);
+        Point predictedLocation = new Point(element.getLocation().x + xOffset, element.getLocation().y + yOffset);
 
         swipe.addAction(finger.createPointerMove(Duration.ofMillis(0), PointerInput.Origin.viewport(), element.getLocation().x, element.getLocation().y));
         swipe.addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()));
-        swipe.addAction(finger.createPointerMove(Duration.ofMillis(500), PointerInput.Origin.viewport(), element.getLocation().x + xOffset, element.getLocation().y + yOffset));
+        swipe.addAction(finger.createPointerMove(Duration.ofMillis(500), PointerInput.Origin.viewport(), predictedLocation.x, predictedLocation.y));
         swipe.addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
 
         driver.perform(Collections.singletonList(swipe));
+
+        while (!isStable(element)) {
+            System.out.println("Czekam aż obraz się ustabilizuje po slidzie...");
+        }
+    }
+
+    private boolean isStable(WebElement element) {
+        Point firstLocation = element.getLocation();
+        try {
+            Thread.sleep(200);
+            Point secondLocation = element.getLocation();
+            return firstLocation.equals(secondLocation);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            return false;
+        }
     }
 
     public void implicitWait(long millis) {
         try {
-            System.out.println("Czekam...");
             Thread.sleep(millis);
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -133,7 +149,7 @@ public abstract class AbstractPage {
     }
 
     public void realTyping(String text) {
-        implicitWait(200);
+        implicitWait(300);
         for (char c : text.toCharArray()) {
             AndroidKey key = keyMap.get(String.valueOf(c));
             try {

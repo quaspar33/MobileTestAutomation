@@ -23,7 +23,7 @@ public class QuestionnaireThirdPage extends AbstractPage {
     }
 
     public void enterEndQuestionnaire() {
-        implicitWait(3000);
+        implicitWait(2000);
         endQuestionnaire.click();
     }
 }

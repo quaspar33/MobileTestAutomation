@@ -12,7 +12,7 @@ public class QuestionnaireSecondPage extends AbstractPage {
         System.out.println("Rozpoczynam wypełnianie drugiej strony kwestionariusza!");
     }
 
-    @AndroidFindBy(uiAutomator = "new UiSelector().className(\"android.view.ViewGroup\").instance(38)")
+    @AndroidFindBy(uiAutomator = "new UiSelector().className(\"android.view.ViewGroup\").instance(39)")
     private WebElement unemployedCheckbox;
 
     @AndroidFindBy(uiAutomator = "new UiSelector().text(\"Dalej\")")
@@ -23,7 +23,7 @@ public class QuestionnaireSecondPage extends AbstractPage {
     }
 
     public void enterNextPage() {
-        implicitWait(3000);
+        implicitWait(2000);
         nextPage.click();
     }
 }

@@ -10,8 +10,6 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import java.time.LocalDate;
 import java.util.LinkedHashMap;
-import java.util.concurrent.TimeUnit;
-import java.util.Map;
 
 public class QuestionnaireFirstPage extends AbstractPage {
     private JsonHandler jsonHandler;
@@ -161,14 +159,13 @@ public class QuestionnaireFirstPage extends AbstractPage {
         }};
 
         adresMap.forEach((key, value) -> {
-            wait.until(ExpectedConditions.visibilityOf(key)).click();
+            wait.until(ExpectedConditions.elementToBeClickable(key)).click();
             realTyping(jsonHandler.getStrFromJson(value));
             if (!value.equals("buildingNumber")) {
-                wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//android.widget.TextView[@text=\"" + jsonHandler.getStrFromJson(value) + "\"]"))).click();
+                wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//android.widget.TextView[@text=\"" + jsonHandler.getStrFromJson(value) + "\"]"))).click();
             }
             slideFromElement(wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//android.widget.EditText[@text=\"" + jsonHandler.getStrFromJson(value) + "\"]"))), 0, -600);
         });
-
     }
 
     public void setCheckbox() {

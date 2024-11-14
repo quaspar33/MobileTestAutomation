@@ -16,6 +16,9 @@ public class AcceptCommissionPage extends AbstractPage {
     private JsonHandler jsonHandler;
     private int commissionDay;
 
+    @AndroidFindBy(uiAutomator = "new UiSelector().className(\"com.horcrux.svg.PathView\").instance(18)")
+    private WebElement startButton;
+
     @AndroidFindBy(uiAutomator = "new UiSelector().text(\"Zlecenie 2024\")")
     private WebElement commission;
 
@@ -64,10 +67,11 @@ public class AcceptCommissionPage extends AbstractPage {
     }
 
     public void clickCommission() {
+        wait.until(ExpectedConditions.visibilityOf(startButton)).click();
         wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(
                 String.format("//android.view.ViewGroup[@content-desc=\"%02d, %s\"]/android.view.ViewGroup",
                         commissionDay,
-                        dayMap.get(currentDate.getDayOfWeek()))
+                        dayMap.get(currentDate.getDayOfWeek().plus(2)))
         ))).click();
 
         wait.until(ExpectedConditions.visibilityOf(commission)).click();

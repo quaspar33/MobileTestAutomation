@@ -45,7 +45,7 @@ public class ApiHandler {
         try {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() == 200) {
-                System.out.println("Udało się wysłać dane na endpoint.");
+                System.out.println("Udało się wysłać dane na endpoint. Response body: " + response.body());
             } else {
                 System.out.println("Nie udało się wysłać danych na endpoint.");
             }
