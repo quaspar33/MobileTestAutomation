@@ -13,14 +13,14 @@ public class QuestionnaireSecondPage extends AbstractPage {
         System.out.println("Rozpoczynam wypełnianie drugiej strony kwestionariusza!");
     }
 
-    @AndroidFindBy(uiAutomator = "new UiSelector().className(\"android.view.ViewGroup\").instance(38)")
-    private WebElement unemployedCheckbox;
+    @AndroidFindBy(uiAutomator = "new UiSelector().text(\"Bezrobotny/a\")")
+    private WebElement unemployedText;
 
     @AndroidFindBy(uiAutomator = "new UiSelector().text(\"Dalej\")")
     private WebElement nextPage;
 
     public void enterUnemployedCheckbox() {
-        wait.until(ExpectedConditions.visibilityOf(unemployedCheckbox)).click();
+        wait.until(ExpectedConditions.visibilityOf(unemployedText)).click();
     }
 
     public void enterNextPage() {

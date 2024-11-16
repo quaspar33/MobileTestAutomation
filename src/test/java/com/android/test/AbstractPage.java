@@ -5,6 +5,7 @@ import io.appium.java_client.android.nativekey.AndroidKey;
 import io.appium.java_client.android.nativekey.KeyEvent;
 import io.appium.java_client.android.nativekey.KeyEventMetaModifier;
 import io.appium.java_client.pagefactory.AppiumFieldDecorator;
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Point;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
@@ -17,6 +18,7 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 
 public abstract class AbstractPage {
     public static AndroidDriver driver;
@@ -29,7 +31,7 @@ public abstract class AbstractPage {
     public static int currentDay;
     public static int currentYear;
 
-    private HashMap<String, AndroidKey> keyMap = new HashMap<>() {{
+    private Map<String, AndroidKey> keyMap = new HashMap<>() {{
         put("0", AndroidKey.DIGIT_0);
         put("1", AndroidKey.DIGIT_1);
         put("2", AndroidKey.DIGIT_2);
@@ -162,5 +164,31 @@ public abstract class AbstractPage {
             }
         }
         driver.pressKey(new KeyEvent(AndroidKey.ENTER));
+    }
+
+    public void refreshApp() {
+        Dimension size = driver.manage().window().getSize();
+        int screenWidth = size.getWidth();
+        int screenHeight = size.getHeight();
+
+        int startX = screenWidth / 2;
+        int startY = screenHeight / 3;
+        int endY = (screenHeight * 2) / 3;
+
+        PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
+        Sequence swipe = new Sequence(finger, 0);
+
+        swipe.addAction(finger.createPointerMove(Duration.ofMillis(0), PointerInput.Origin.viewport(), startX, startY));
+        swipe.addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()));
+        swipe.addAction(finger.createPointerMove(Duration.ofMillis(300), PointerInput.Origin.viewport(), startX, endY));
+        swipe.addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
+
+        driver.perform(Collections.singletonList(swipe));
+
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }

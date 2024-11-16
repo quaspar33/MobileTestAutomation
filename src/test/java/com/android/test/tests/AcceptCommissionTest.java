@@ -18,7 +18,7 @@ public class AcceptCommissionTest extends AbstractTest {
     @Test(groups = "acceptCommission", dependsOnGroups = "verifyPartner")
     public void acceptCommissionTest() {
         acceptCommissionPage.clickCommission();
-        acceptCommissionPage.acceptCommission();
+        acceptCommissionPage.clickAcceptCommission();
         acceptCommissionPage.setAgreements();
     }
 }

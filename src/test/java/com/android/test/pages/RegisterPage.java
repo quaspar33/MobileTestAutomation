@@ -42,8 +42,7 @@ public class RegisterPage extends AbstractPage {
 
     public void clickRegisterButton() {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
-        wait.until(ExpectedConditions.visibilityOf(registerButton));
-        registerButton.click();
+        wait.until(ExpectedConditions.visibilityOf(registerButton)).click();
     }
 
     public void enterPhoneNumber() {

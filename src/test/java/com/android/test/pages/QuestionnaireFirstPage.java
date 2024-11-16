@@ -8,8 +8,8 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
-import java.time.LocalDate;
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class QuestionnaireFirstPage extends AbstractPage {
     private JsonHandler jsonHandler;
@@ -151,7 +151,7 @@ public class QuestionnaireFirstPage extends AbstractPage {
     }
 
     public void enterAddress() {
-        LinkedHashMap<WebElement, String> addressMap = new LinkedHashMap<>() {{
+        Map<WebElement, String> addressMap = new LinkedHashMap<>() {{
             put(postalCode, "postalCode");
             put(cityName, "cityName");
             put(streetName, "streetName");
@@ -173,7 +173,7 @@ public class QuestionnaireFirstPage extends AbstractPage {
     }
 
     public void enterNextPage() {
-        implicitWait(3000);
+        implicitWait(2000);
         nextPage.click();
     }
 }
