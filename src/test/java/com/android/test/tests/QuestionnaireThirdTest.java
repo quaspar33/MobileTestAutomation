@@ -15,7 +15,7 @@ public class QuestionnaireThirdTest extends AbstractTest {
         questionnaireThirdPage = new QuestionnaireThirdPage(driver);
     }
 
-    @Test(groups = "questionnaireThird", dependsOnGroups = "questionnaireSecond")
+    @Test
     public void questionnaireThirdTest() {
         questionnaireThirdPage.enterConfirmation();
         questionnaireThirdPage.enterEndQuestionnaire();

@@ -15,7 +15,7 @@ public class QuestionnaireSecondTest extends AbstractTest {
         questionnaireSecondPage = new QuestionnaireSecondPage(driver);
     }
 
-    @Test(groups = "questionnaireSecond", dependsOnGroups = "questionnaireFirst")
+    @Test
     public void questionnaireSecondTest() {
         questionnaireSecondPage.enterUnemployedCheckbox();
         questionnaireSecondPage.enterNextPage();

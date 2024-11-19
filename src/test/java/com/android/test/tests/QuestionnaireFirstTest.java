@@ -15,7 +15,7 @@ public class QuestionnaireFirstTest extends AbstractTest {
         questionnaireFirstPage = new QuestionnaireFirstPage(driver);
     }
 
-    @Test(groups = "questionnaireFirst", dependsOnGroups = "login")
+    @Test
     public void questionnaireFirstTest() {
         questionnaireFirstPage.clickQuestionnaire();
         questionnaireFirstPage.enterBirthDate();

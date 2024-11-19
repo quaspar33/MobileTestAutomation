@@ -34,7 +34,7 @@ public class VerifyPartnerTest {
         driver.quit();
     }
 
-    @Test(groups = "verifyPartner", dependsOnGroups = "questionnaireThird")
+    @Test
     public void verifyPartner() {
         driver.findElement(By.name("login")).sendKeys(jsonHandler.getStrFromJson("login"));
         driver.findElement(By.name("password")).sendKeys(jsonHandler.getStrFromJson("password"));

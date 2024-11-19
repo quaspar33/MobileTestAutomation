@@ -16,7 +16,7 @@ public class LoginTest extends AbstractTest {
         loginPage = new LoginPage(driver);
     }
 
-    @Test(groups = "login", dependsOnGroups = "register")
+    @Test
     public void loginTest() {
         loginPage.enterPhoneNumber();
         loginPage.enterPassword(BaseTest.getRegisterTime());

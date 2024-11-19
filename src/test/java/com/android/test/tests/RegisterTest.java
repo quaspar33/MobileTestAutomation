@@ -18,7 +18,7 @@ public class RegisterTest extends AbstractTest {
         registerPage = new RegisterPage(driver);
     }
 
-    @Test(groups = "register")
+    @Test
     public void registerTest() {
         BaseTest.setRegisterTime(LocalDateTime.now());
         registerPage.clickRegisterButton();

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="PartnerProcess" verbose="0">
+    <test thread-count="5" name="PartnerProcessTest" verbose="0">
+        <classes>
+            <class name="com.android.test.BaseTest"/>
+            <class name="com.android.test.tests.RegisterTest"/>
+            <class name="com.android.test.tests.LoginTest"/>
+            <class name="com.android.test.tests.QuestionnaireFirstTest"/>
+            <class name="com.android.test.tests.QuestionnaireSecondTest"/>
+            <class name="com.android.test.tests.QuestionnaireThirdTest"/>
+            <class name="com.android.test.VerifyPartnerTest"/>
+            <class name="com.android.test.tests.AcceptCommissionTest"/>
+        </classes>
+    </test>
+</suite>
