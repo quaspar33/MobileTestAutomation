@@ -61,29 +61,30 @@ public class QuestionnaireFirstPage extends AbstractPage {
     @AndroidFindBy(uiAutomator = "new UiSelector().text(\"Nr rachunku bankowego\")")
     private WebElement iban;
 
-    @AndroidFindBy(uiAutomator = "new UiSelector().className(\"android.widget.EditText\").instance(2)")
+    @AndroidFindBy(uiAutomator = "new UiSelector().text(\"Kod pocztowy *\")")
     private WebElement postalCode;
 
-    @AndroidFindBy(uiAutomator = "new UiSelector().className(\"android.widget.EditText\").instance(2)")
+    @AndroidFindBy(uiAutomator = "new UiSelector().text(\"Miasto *\")")
     private WebElement cityName;
 
-    @AndroidFindBy(uiAutomator = "new UiSelector().className(\"android.widget.EditText\").instance(2)")
+    @AndroidFindBy(uiAutomator = "new UiSelector().text(\"Ulica *\")")
     private WebElement streetName;
 
-    @AndroidFindBy(uiAutomator = "new UiSelector().text(\"Nr budynku\")")
+    @AndroidFindBy(uiAutomator = "new UiSelector().text(\"Nr budynku *\")")
     private WebElement buildingNumber;
 
-    @AndroidFindBy(uiAutomator = "new UiSelector().className(\"android.view.ViewGroup\").instance(51)")
+    @AndroidFindBy(uiAutomator = "new UiSelector().text(\"Tak\")")
     private WebElement yesCheckbox;
-
-    @AndroidFindBy(uiAutomator = "new UiSelector().className(\"com.horcrux.svg.PathView\").instance(0)")
-    private WebElement goBackButton;
-
-    @AndroidFindBy(uiAutomator = "new UiSelector().className(\"com.horcrux.svg.PathView\").instance(17)")
-    private WebElement fillQuestionnaireFromProfile;
 
     @AndroidFindBy(uiAutomator = "new UiSelector().text(\"Dalej\")")
     private WebElement nextPage;
+
+    Map<WebElement, String> addressMap = new LinkedHashMap<>() {{
+        put(postalCode, "postalCode");
+        put(cityName, "cityName");
+        put(streetName, "streetName");
+        put(buildingNumber, "buildingNumber");
+    }};
 
     public void clickQuestionnaire() {
         wait.until(ExpectedConditions.visibilityOf(fillQuestionnaire)).click();
@@ -151,20 +152,13 @@ public class QuestionnaireFirstPage extends AbstractPage {
     }
 
     public void enterAddress() {
-        Map<WebElement, String> addressMap = new LinkedHashMap<>() {{
-            put(postalCode, "postalCode");
-            put(cityName, "cityName");
-            put(streetName, "streetName");
-            put(buildingNumber, "buildingNumber");
-        }};
-
         addressMap.forEach((key, value) -> {
-            wait.until(ExpectedConditions.elementToBeClickable(key)).click();
+            touchFromElement(wait.until(ExpectedConditions.visibilityOf(key)), 0, 60);
             realTyping(jsonHandler.getStrFromJson(value));
             if (!value.equals("buildingNumber")) {
                 wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//android.widget.TextView[@text=\"" + jsonHandler.getStrFromJson(value) + "\"]"))).click();
             }
-            slideFromElement(wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//android.widget.EditText[@text=\"" + jsonHandler.getStrFromJson(value) + "\"]"))), 0, -600);
+            slideFromElement(wait.until(ExpectedConditions.visibilityOf(key)), 0, -600);
         });
     }
 

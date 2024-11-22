@@ -1,6 +1,7 @@
 package com.android.test.pages;
 
 import com.android.test.AbstractPage;
+import com.android.test.BaseTest;
 import com.android.test.JsonHandler;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.pagefactory.AndroidFindBy;
@@ -11,6 +12,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class RegisterPage extends AbstractPage {
@@ -21,6 +23,9 @@ public class RegisterPage extends AbstractPage {
         jsonHandler = new JsonHandler("register.json");
         System.out.println("Rozpoczynam test rejestracji!");
     }
+
+    @AndroidFindBy(uiAutomator = "new UiSelector().text(\"Przypomnij\")")
+    private WebElement slideElement;
 
     @AndroidFindBy(uiAutomator = "new UiSelector().text(\"Załóż konto\")")
     private WebElement registerButton;
@@ -41,7 +46,7 @@ public class RegisterPage extends AbstractPage {
     private WebElement comebackButton;
 
     public void clickRegisterButton() {
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
+        slideFromElement(wait.until(ExpectedConditions.visibilityOf(slideElement)), 0, -1500);
         wait.until(ExpectedConditions.visibilityOf(registerButton)).click();
     }
 
@@ -58,6 +63,7 @@ public class RegisterPage extends AbstractPage {
     }
 
     public void clickCreateAccountButton() {
+        BaseTest.setRegisterTime(LocalDateTime.now());
         createAccountButton.click();
     }
 }

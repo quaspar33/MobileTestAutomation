@@ -5,9 +5,7 @@ import io.appium.java_client.android.nativekey.AndroidKey;
 import io.appium.java_client.android.nativekey.KeyEvent;
 import io.appium.java_client.android.nativekey.KeyEventMetaModifier;
 import io.appium.java_client.pagefactory.AppiumFieldDecorator;
-import org.openqa.selenium.Dimension;
-import org.openqa.selenium.Point;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.interactions.PointerInput;
 import org.openqa.selenium.interactions.Sequence;
@@ -18,7 +16,9 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 public abstract class AbstractPage {
     public static AndroidDriver driver;
@@ -127,6 +127,30 @@ public abstract class AbstractPage {
         while (!isElementStable(element)) {
             System.out.println("Czekam aż obraz się ustabilizuje po slidzie...");
         }
+    }
+
+    public void touchFromElement(WebElement element, int xOffset, int yOffset) {
+        try {
+            findElementAtLocation(new Point(element.getLocation().x + xOffset, element.getLocation().y + yOffset)).click();
+        } catch (NullPointerException e) {
+            System.err.println("Nie udało się zlokalizować elementu pod podanymi współrzędnymi.");
+        }
+
+        while (!isElementStable(element)) {
+            System.out.println("Czekam aż obraz się ustabilizuje po dotknięciu...");
+        }
+    }
+
+    private WebElement findElementAtLocation(Point location) {
+        List<WebElement> allElements = driver.findElements(By.xpath("//*"));
+        AtomicReference<WebElement> atomicElement = new AtomicReference<>(null);
+        allElements.forEach(element -> {
+            Rectangle rect = element.getRect();
+            if (location.x >= rect.getX() && location.x <= rect.getX() + rect.getWidth() && location.y >= rect.getY() && location.y <= rect.getY() + rect.getHeight()) {
+                atomicElement.set(element);
+            }
+        });
+        return atomicElement.get();
     }
 
     private boolean isElementStable(WebElement element) {

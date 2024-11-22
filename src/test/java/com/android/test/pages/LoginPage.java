@@ -33,8 +33,7 @@ public class LoginPage extends AbstractPage {
     private WebElement loginButton;
 
     public void enterPhoneNumber() {
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
-        wait.until(ExpectedConditions.visibilityOf(phoneNumberField)).sendKeys(jsonHandler.getStrFromJson("phoneNumber"));
+        new WebDriverWait(driver, Duration.ofSeconds(20)).until(ExpectedConditions.visibilityOf(phoneNumberField)).sendKeys(jsonHandler.getStrFromJson("phoneNumber"));
     }
 
     public void enterPassword(LocalDateTime registerTime) {
@@ -50,7 +49,7 @@ public class LoginPage extends AbstractPage {
                 LocalDateTime smsDate = LocalDateTime.parse(parts[1], DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
                 String phoneNumber = "48" + jsonHandler.getStrFromJson("phoneNumber");
 
-                if (smsDate.isAfter(registerTime) && parts[2].equals(phoneNumber)) {
+                if (registerTime.isBefore(smsDate) && parts[2].equals(phoneNumber)) {
                     String password = parts[0].replace("[DEV] Czesc! Twoje haslo do Tikrow to: ", "");
                     atomicPassword.set(password);
                     return true;

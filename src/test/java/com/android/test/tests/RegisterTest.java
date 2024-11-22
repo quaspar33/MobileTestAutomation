@@ -20,7 +20,6 @@ public class RegisterTest extends AbstractTest {
 
     @Test
     public void registerTest() {
-        BaseTest.setRegisterTime(LocalDateTime.now());
         registerPage.clickRegisterButton();
         registerPage.enterPhoneNumber();
         registerPage.enterPostalCode();
