@@ -92,11 +92,9 @@ public class QuestionnaireFirstPage extends AbstractPage {
 
     public void enterBirthDate() {
         wait.until(ExpectedConditions.visibilityOf(birthDate)).click();
-        By element;
         while (currentDate.getYear() - birthYear < 18) {
-            element = By.xpath(String.format("//android.widget.EditText[@text=\"%d\"]", birthYear));
-            WebElement webElement = wait.until(ExpectedConditions.presenceOfElementLocated(element));
-            slideFromElement(webElement, 0, 140);
+            WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(String.format("//android.widget.EditText[@text=\"%d\"]", birthYear))));
+            slideFromElement(element, 0, 180);
             birthYear--;
         }
         birthDateOkButton.click();

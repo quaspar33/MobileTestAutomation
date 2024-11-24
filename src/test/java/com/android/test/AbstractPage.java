@@ -102,7 +102,7 @@ public abstract class AbstractPage {
     public AbstractPage(AndroidDriver driver) {
         AbstractPage.driver = driver;
         PageFactory.initElements(new AppiumFieldDecorator(driver), this);
-        wait = new WebDriverWait(driver, Duration.ofSeconds(15));
+        wait = new WebDriverWait(driver, Duration.ofSeconds(25));
         actions = new Actions(driver);
         database = new Database();
         apiHandler = new ApiHandler();

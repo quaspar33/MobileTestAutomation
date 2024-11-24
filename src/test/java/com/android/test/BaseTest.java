@@ -23,16 +23,8 @@ public class BaseTest {
     public void setupApp() throws MalformedURLException {
         databaseSetup();
 
-//        DesiredCapabilities capabilities = new DesiredCapabilities();
-//        capabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, "Android");
-//        capabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, "15.0");
-//        capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "emulator-5554");
-//        capabilities.setCapability("autoGrantPermissions", true);
-//        capabilities.setCapability(MobileCapabilityType.APP, System.getProperty("user.dir") + "/../app_versions/android_dev/application-c1ba8ccb-5e3a-44a2-ad60-f20e43ffab4d.apk");
-//        capabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME, "UiAutomator2");
-
         MutableCapabilities capabilities = new UiAutomator2Options();
-        driver = new AndroidDriver(new URL("http://127.0.0.1:4723"),capabilities);
+        driver = new AndroidDriver(new URL("http://127.0.0.1:4723"), capabilities);
     }
 
     @AfterSuite
