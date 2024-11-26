@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
 <suite name="PartnerProcess" verbose="0">
+    <listeners>
+        <listener class-name="com.android.test.TestFailureListener"/>
+    </listeners>
     <test thread-count="1" name="PartnerProcessTest" verbose="0">
         <classes>
             <class name="com.android.test.BaseTest"/>

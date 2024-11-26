@@ -26,3 +26,5 @@
 /src/test/java/com/android/test/resources/geckodriver
 
 browserstack.yml
+
+*.apk

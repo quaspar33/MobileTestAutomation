@@ -136,7 +136,7 @@ public class QuestionnaireFirstPage extends AbstractPage {
 
     public void enterTaxOffice() {
         wait.until(ExpectedConditions.visibilityOf(taxOffice));
-        slideFromElement(taxOffice, 0, -1500);
+        slideFromElement(taxOffice, 0, -500);
         taxOffice.click();
         wait.until(ExpectedConditions.visibilityOf(taxOfficeName)).click();
     }

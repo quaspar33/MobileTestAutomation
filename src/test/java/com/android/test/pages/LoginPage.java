@@ -2,6 +2,7 @@ package com.android.test.pages;
 
 import com.android.test.AbstractPage;
 import com.android.test.JsonHandler;
+import com.android.test.PasswordFromSmsParser;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.pagefactory.AndroidFindBy;
 import org.openqa.selenium.WebElement;
@@ -46,11 +47,11 @@ public class LoginPage extends AbstractPage {
                 String[] parts = sms.split(";");
                 if (parts.length < 3) continue;
 
+                String password = new PasswordFromSmsParser().parse(parts[0]);
                 LocalDateTime smsDate = LocalDateTime.parse(parts[1], DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-                String phoneNumber = "48" + jsonHandler.getStrFromJson("phoneNumber");
+                String phoneNumber = parts[2];
 
-                if (registerTime.isBefore(smsDate) && parts[2].equals(phoneNumber)) {
-                    String password = parts[0].replace("[DEV] Czesc! Twoje haslo do Tikrow to: ", "");
+                if (registerTime.isBefore(smsDate) && phoneNumber.equals("48".concat(jsonHandler.getStrFromJson("phoneNumber")))) {
                     atomicPassword.set(password);
                     return true;
                 }
