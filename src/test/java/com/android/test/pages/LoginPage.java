@@ -58,7 +58,7 @@ public class LoginPage extends AbstractPage {
             }
             return false;
         });
-        System.out.println("Udało się pobrać hasło!");
+        System.out.println(String.format("Udało się pobrać hasło tymczasowe: %s.", atomicPassword.get()));
         passwordField.sendKeys(atomicPassword.get());
         database.disconnect();
     }

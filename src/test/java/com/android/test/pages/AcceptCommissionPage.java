@@ -27,7 +27,7 @@ public class AcceptCommissionPage extends AbstractPage {
     @AndroidFindBy(uiAutomator = "new UiSelector().text(\"Zlecenie 2024\").instance(0)")
     private WebElement commissionInstance;
 
-    @AndroidFindBy(uiAutomator = "new UiSelector().text(\"Sprawdź jak dojechać\")")
+    @AndroidFindBy(uiAutomator = "new UiSelector().text(\"Lokalizacja\")")
     private WebElement slideElement;
 
     @AndroidFindBy(uiAutomator = "new UiSelector().text(\"Przyjmuję zlecenie\")")
@@ -70,17 +70,6 @@ public class AcceptCommissionPage extends AbstractPage {
         wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(String.format("//android.view.ViewGroup[@content-desc=\"%02d, %s\"]/android.view.ViewGroup", commissionDay, dayMap.get(currentDate.getDayOfWeek().plus(2)))))).click();
         AtomicReference<WebElement> atomicCommission = new AtomicReference<>(null);
         new WebDriverWait(driver, Duration.ofSeconds(5)).until(driver -> {
-            apiHandler.POST(
-                    jsonHandler.getStrFromJson("uri"),
-                    String.format(
-                            "{\"employees_per_day\":1,\"hours\":1,\"start_time\":\"08:00\",\"dates\":[\"%d-%02d-%02d\"],\"region\":\"4809\",\"location\":\"460\",\"commission\":\"1463\"}",
-                            currentYear,
-                            currentMonth,
-                            commissionDay
-                    ),
-                    jsonHandler.getStrFromJson("auth")
-            );
-            System.out.println("Wystawiono zlecenie!");
             refreshApp();
             if (commission.isDisplayed()) {
                 atomicCommission.set(commission);
@@ -89,6 +78,17 @@ public class AcceptCommissionPage extends AbstractPage {
                 atomicCommission.set(commissionInstance);
                 return true;
             } else {
+                apiHandler.POST(
+                        jsonHandler.getStrFromJson("uri"),
+                        String.format(
+                                "{\"employees_per_day\":1,\"hours\":1,\"start_time\":\"08:00\",\"dates\":[\"%d-%02d-%02d\"],\"region\":\"4809\",\"location\":\"460\",\"commission\":\"1463\"}",
+                                currentYear,
+                                currentMonth,
+                                commissionDay
+                        ),
+                        jsonHandler.getStrFromJson("auth")
+                );
+                System.out.println("Wystawiono zlecenie!");
                 return false;
             }
         });

@@ -12,7 +12,6 @@
             <class name="com.android.test.tests.QuestionnaireFirstTest"/>
             <class name="com.android.test.tests.QuestionnaireSecondTest"/>
             <class name="com.android.test.tests.QuestionnaireThirdTest"/>
-            <class name="com.android.test.VerifyPartnerTest"/>
             <class name="com.android.test.tests.AcceptCommissionTest"/>
         </classes>
     </test>

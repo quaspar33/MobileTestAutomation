@@ -79,7 +79,7 @@ public class QuestionnaireFirstPage extends AbstractPage {
     @AndroidFindBy(uiAutomator = "new UiSelector().text(\"Dalej\")")
     private WebElement nextPage;
 
-    Map<WebElement, String> addressMap = new LinkedHashMap<>() {{
+    private Map<WebElement, String> addressMap = new LinkedHashMap<>() {{
         put(postalCode, "postalCode");
         put(cityName, "cityName");
         put(streetName, "streetName");
@@ -156,7 +156,7 @@ public class QuestionnaireFirstPage extends AbstractPage {
             if (!value.equals("buildingNumber")) {
                 wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//android.widget.TextView[@text=\"" + jsonHandler.getStrFromJson(value) + "\"]"))).click();
             }
-            slideFromElement(wait.until(ExpectedConditions.visibilityOf(key)), 0, -600);
+            slideFromElement(wait.until(ExpectedConditions.visibilityOf(key)), 0, -400);
         });
     }
 

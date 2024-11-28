@@ -1,12 +1,14 @@
 package com.android.test.pages;
 
 import com.android.test.AbstractPage;
+import com.android.test.MavenRunner;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.pagefactory.AndroidFindBy;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
 public class QuestionnaireThirdPage extends AbstractPage {
+
     public QuestionnaireThirdPage(AndroidDriver driver) {
         super(driver);
         System.out.println("Rozpoczynam wypełnianie trzeciej strony kwestionariusza!");
