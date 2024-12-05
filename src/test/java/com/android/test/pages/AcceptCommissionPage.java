@@ -1,10 +1,13 @@
 package com.android.test.pages;
 
 import com.android.test.AbstractPage;
+import com.android.test.Database;
 import com.android.test.JsonHandler;
+import io.appium.java_client.MobileBy;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.pagefactory.AndroidFindBy;
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -17,15 +20,11 @@ import java.util.concurrent.atomic.AtomicReference;
 public class AcceptCommissionPage extends AbstractPage {
     private JsonHandler jsonHandler;
     private int commissionDay;
+    private int commissionsCount;
+    private WebElement commission;
 
     @AndroidFindBy(uiAutomator = "new UiSelector().text(\"Start\")")
     private WebElement startButton;
-
-    @AndroidFindBy(uiAutomator = "new UiSelector().text(\"Zlecenie 2024\")")
-    private WebElement commission;
-
-    @AndroidFindBy(uiAutomator = "new UiSelector().text(\"Zlecenie 2024\").instance(0)")
-    private WebElement commissionInstance;
 
     @AndroidFindBy(uiAutomator = "new UiSelector().text(\"Lokalizacja\")")
     private WebElement slideElement;
@@ -61,38 +60,34 @@ public class AcceptCommissionPage extends AbstractPage {
     public AcceptCommissionPage(AndroidDriver driver) {
         super(driver);
         jsonHandler = new JsonHandler("accept_commission.json");
-        commissionDay = currentDay + 2;
+        commissionDay = currentDate.plusDays(2).getDayOfMonth();
+        database.connect();
+        commissionsCount = database.queryForCommission(String.format("select count(*) as 'commissions' from tikrow_dev.commissions where definitionId = 1463 and startDate like '2024-%02d-%02d %%'", currentMonth, commissionDay));
+        System.out.println(String.format("Liczba zleceń o definicji \"Zlecenie 2024\" = %s, w dniu 2024-%02d-%02d", commissionsCount, currentMonth, commissionDay));
+        database.disconnect();
         System.out.println("Rozpoczynam test przyjęcia zlecenia!");
     }
 
     public void clickCommission() {
         wait.until(ExpectedConditions.visibilityOf(startButton)).click();
-        wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(String.format("//android.view.ViewGroup[@content-desc=\"%02d, %s\"]/android.view.ViewGroup", commissionDay, dayMap.get(currentDate.getDayOfWeek().plus(2)))))).click();
-        AtomicReference<WebElement> atomicCommission = new AtomicReference<>(null);
-        new WebDriverWait(driver, Duration.ofSeconds(5)).until(driver -> {
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(String.format("//android.view.ViewGroup[@content-desc=\"%d, %s\"]/android.view.ViewGroup", commissionDay, dayMap.get(currentDate.getDayOfWeek().plus(2)))))).click();
+        if (commissionsCount > 0) {
+            wait.until(ExpectedConditions.visibilityOf(driver.findElement(MobileBy.AndroidUIAutomator("new UiSelector().text(\"Zlecenie 2024\").instance(0)")))).click();
+        } else {
+            apiHandler.POST(
+                    jsonHandler.getStrFromJson("uri"),
+                    String.format(
+                            "{\"employees_per_day\":1,\"hours\":1,\"start_time\":\"08:00\",\"dates\":[\"%d-%02d-%02d\"],\"region\":\"4809\",\"location\":\"460\",\"commission\":\"1463\"}",
+                            currentYear,
+                            currentMonth,
+                            commissionDay
+                    ),
+                    jsonHandler.getStrFromJson("auth")
+            );
+            System.out.println("Wystawiono zlecenie!");
             refreshApp();
-            if (commission.isDisplayed()) {
-                atomicCommission.set(commission);
-                return true;
-            } else if (commissionInstance.isDisplayed()) {
-                atomicCommission.set(commissionInstance);
-                return true;
-            } else {
-                apiHandler.POST(
-                        jsonHandler.getStrFromJson("uri"),
-                        String.format(
-                                "{\"employees_per_day\":1,\"hours\":1,\"start_time\":\"08:00\",\"dates\":[\"%d-%02d-%02d\"],\"region\":\"4809\",\"location\":\"460\",\"commission\":\"1463\"}",
-                                currentYear,
-                                currentMonth,
-                                commissionDay
-                        ),
-                        jsonHandler.getStrFromJson("auth")
-                );
-                System.out.println("Wystawiono zlecenie!");
-                return false;
-            }
-        });
-        atomicCommission.get().click();
+            wait.until(ExpectedConditions.visibilityOf(driver.findElement(MobileBy.AndroidUIAutomator("new UiSelector().text(\"Zlecenie 2024\")")))).click();
+        }
     }
 
     public void clickAcceptCommission() {

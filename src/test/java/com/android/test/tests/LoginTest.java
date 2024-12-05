@@ -18,6 +18,7 @@ public class LoginTest extends AbstractTest {
 
     @Test
     public void loginTest() {
+        loginPage.denyAutomaticLogin();
         loginPage.enterPhoneNumber();
         loginPage.enterPassword(BaseTest.getRegisterTime());
         loginPage.clickLoginButton();

@@ -72,6 +72,20 @@ public class Database {
         return output;
     }
 
+    public int queryForCommission(String query) {
+        int commissions = 0;
+        try (Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery(query)) {
+            if (resultSet.next()) {
+                commissions = resultSet.getInt("commissions");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return commissions;
+    }
+
     public int executeUpdate(String query) {
         int rowsAffected = 0;
 

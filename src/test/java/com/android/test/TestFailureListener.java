@@ -19,6 +19,5 @@ public class TestFailureListener implements ITestListener {
         executorObject.put("action", "setSessionStatus");
         executorObject.put("arguments", argumentsObject);
         jse.executeScript(String.format("browserstack_executor: %s", executorObject));
-
     }
 }

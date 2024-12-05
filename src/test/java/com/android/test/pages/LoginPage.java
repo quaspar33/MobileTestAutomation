@@ -5,6 +5,8 @@ import com.android.test.JsonHandler;
 import com.android.test.PasswordFromSmsParser;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.pagefactory.AndroidFindBy;
+import org.openqa.selenium.By;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -32,6 +34,14 @@ public class LoginPage extends AbstractPage {
 
     @AndroidFindBy(uiAutomator = "new UiSelector().description(\"Zaloguj się\")")
     private WebElement loginButton;
+
+    public void denyAutomaticLogin() {
+        try {
+            wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//android.widget.Button[@resource-id=\"com.android.permissioncontroller:id/permission_deny_button\"] "))).click();
+        } catch (TimeoutException e) {
+            System.out.println("Prośba o udzielenie zgody na wysyłanie SMS nie pojawiła się.");
+        }
+    }
 
     public void enterPhoneNumber() {
         new WebDriverWait(driver, Duration.ofSeconds(20)).until(ExpectedConditions.visibilityOf(phoneNumberField)).sendKeys(jsonHandler.getStrFromJson("phoneNumber"));
