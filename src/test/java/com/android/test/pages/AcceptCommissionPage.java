@@ -1,19 +1,15 @@
 package com.android.test.pages;
 
 import com.android.test.AbstractPage;
-import com.android.test.Database;
 import com.android.test.JsonHandler;
 import io.appium.java_client.MobileBy;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.pagefactory.AndroidFindBy;
 import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.DayOfWeek;
-import java.time.Duration;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -62,17 +58,18 @@ public class AcceptCommissionPage extends AbstractPage {
         jsonHandler = new JsonHandler("accept_commission.json");
         commissionDay = currentDate.plusDays(2).getDayOfMonth();
         database.connect();
-        commissionsCount = database.queryForCommission(String.format("select count(*) as 'commissions' from tikrow_dev.commissions where definitionId = 1463 and startDate like '2024-%02d-%02d %%'", currentMonth, commissionDay));
-        System.out.println(String.format("Liczba zleceń o definicji \"Zlecenie 2024\" = %s, w dniu 2024-%02d-%02d", commissionsCount, currentMonth, commissionDay));
+        commissionsCount = database.queryForCommission(String.format("select count(*) as 'commissions' from tikrow_dev.commissions where startDate like '2024-%02d-%02d %%' and taken = 0", currentMonth, commissionDay));
+        System.out.println(String.format("Liczba zleceń na dzień 2024-%02d-%02d: %s", currentMonth, commissionDay, commissionsCount));
         database.disconnect();
         System.out.println("Rozpoczynam test przyjęcia zlecenia!");
     }
 
     public void clickCommission() {
         wait.until(ExpectedConditions.visibilityOf(startButton)).click();
-        wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(String.format("//android.view.ViewGroup[@content-desc=\"%d, %s\"]/android.view.ViewGroup", commissionDay, dayMap.get(currentDate.getDayOfWeek().plus(2)))))).click();
+        By dateFilter = By.xpath(String.format("//android.view.ViewGroup[@content-desc=\"%d, %s\"]/android.view.ViewGroup", commissionDay, dayMap.get(currentDate.getDayOfWeek().plus(2))));
+        wait.until(ExpectedConditions.presenceOfElementLocated(dateFilter)).click();
         if (commissionsCount > 0) {
-            wait.until(ExpectedConditions.visibilityOf(driver.findElement(MobileBy.AndroidUIAutomator("new UiSelector().text(\"Zlecenie 2024\").instance(0)")))).click();
+            touchFromElement(wait.until(ExpectedConditions.presenceOfElementLocated(dateFilter)), 0, 1200);
         } else {
             apiHandler.POST(
                     jsonHandler.getStrFromJson("uri"),

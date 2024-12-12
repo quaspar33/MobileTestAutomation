@@ -143,7 +143,7 @@ public abstract class AbstractPage {
 
     private WebElement findElementAtLocation(Point location) {
         List<WebElement> allElements = driver.findElements(By.xpath("//*"));
-        AtomicReference<WebElement> atomicElement = new AtomicReference<>(null);
+        AtomicReference<WebElement> atomicElement = new AtomicReference<>();
         allElements.forEach(element -> {
             Rectangle rect = element.getRect();
             if (location.x >= rect.getX() && location.x <= rect.getX() + rect.getWidth() && location.y >= rect.getY() && location.y <= rect.getY() + rect.getHeight()) {
