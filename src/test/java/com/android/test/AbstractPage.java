@@ -135,10 +135,6 @@ public abstract class AbstractPage {
         } catch (NullPointerException e) {
             System.err.println("Nie udało się zlokalizować elementu pod podanymi współrzędnymi.");
         }
-
-        while (!isElementStable(element)) {
-            System.out.println("Czekam aż obraz się ustabilizuje po dotknięciu...");
-        }
     }
 
     private WebElement findElementAtLocation(Point location) {
