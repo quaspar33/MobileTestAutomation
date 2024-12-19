@@ -1,13 +1,15 @@
 package com.android.test;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class PasswordFromSmsParser {
     public String parse(String input) {
-        String[] lines = input.split("\n");
-        for (String line : lines) {
-            if (line.trim().startsWith("<#> code ")) {
-                return line.trim().substring(9);
-            }
+        Pattern pattern = Pattern.compile("\\d{6}");
+        Matcher matcher = pattern.matcher(input);
+        if (matcher.find()) {
+            return matcher.group(0);
         }
-        return "";
+        return null;
     }
 }
