@@ -10,14 +10,17 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class AcceptCommissionPage extends AbstractPage {
     private JsonHandler jsonHandler;
+    private LocalDate commissionDate;
     private int commissionDay;
+    private int commissionMonth;
+    private int commissionYear;
     private int commissionsCount;
-    private WebElement commission;
 
     @AndroidFindBy(uiAutomator = "new UiSelector().text(\"Start\")")
     private WebElement startButton;
@@ -56,10 +59,13 @@ public class AcceptCommissionPage extends AbstractPage {
     public AcceptCommissionPage(AndroidDriver driver) {
         super(driver);
         jsonHandler = new JsonHandler("accept_commission.json");
-        commissionDay = currentDate.plusDays(2).getDayOfMonth();
+        commissionDate = currentDate.plusDays(2);
+        commissionDay = commissionDate.getDayOfMonth();
+        commissionMonth = commissionDate.getMonthValue();
+        commissionYear = commissionDate.getYear();
         database.connect();
-        commissionsCount = database.queryForCommission(String.format("select count(*) as 'commissions' from tikrow_dev.commissions where startDate like '2024-%02d-%02d %%' and taken = 0", currentMonth, commissionDay));
-        System.out.println(String.format("Liczba zleceń na dzień 2024-%02d-%02d: %s", currentMonth, commissionDay, commissionsCount));
+        commissionsCount = database.queryForCommission(String.format("select count(*) as 'commissions' from tikrow_dev.commissions where startDate like '2024-%02d-%02d %%' and taken = 0", commissionMonth, commissionDay));
+        System.out.println(String.format("Liczba zleceń na dzień 2024-%02d-%02d: %s", commissionMonth, commissionDay, commissionsCount));
         database.disconnect();
         System.out.println("Rozpoczynam test przyjęcia zlecenia!");
     }
@@ -75,8 +81,8 @@ public class AcceptCommissionPage extends AbstractPage {
                     jsonHandler.getStrFromJson("uri"),
                     String.format(
                             "{\"employees_per_day\":1,\"hours\":1,\"start_time\":\"08:00\",\"dates\":[\"%d-%02d-%02d\"],\"region\":\"4809\",\"location\":\"460\",\"commission\":\"1463\"}",
-                            currentYear,
-                            currentMonth,
+                            commissionYear,
+                            commissionMonth,
                             commissionDay
                     ),
                     jsonHandler.getStrFromJson("auth")

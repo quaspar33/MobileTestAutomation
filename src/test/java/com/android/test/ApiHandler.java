@@ -4,9 +4,12 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ApiHandler {
     private HttpClient client;
+    Pattern pattern = Pattern.compile("\"err\":\"([^\"]+)\"");
 
     public ApiHandler() {
         this.client = HttpClient.newHttpClient();
@@ -19,7 +22,7 @@ public class ApiHandler {
                 .build();
 
         HttpResponse<String> response = null;
-        
+
         try {
             response = client.send(request, HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() == 200) {
@@ -45,9 +48,19 @@ public class ApiHandler {
         try {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() == 200) {
-                System.out.println("Udało się wysłać dane na endpoint. Response body: " + response.body());
+                System.out.println("Udało się wysłać dane na endpoint. Response code: 200");
             } else {
-                System.out.println("Nie udało się wysłać danych na endpoint.");
+                Matcher matcher = pattern.matcher(response.body());
+                System.out.printf(
+                        """
+                        Nie udało się wysłać danych na endpoint dla: %s.
+                        Powód: %s
+                        Response code: %s
+                        """,
+                        matcher.find() ? matcher.group(1) : "nie udało się pobrać treści błędu",
+                        response.body(),
+                        response.statusCode()
+                );
             }
         } catch (Exception e) {
             e.printStackTrace();
