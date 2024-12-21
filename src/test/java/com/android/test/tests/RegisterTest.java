@@ -1,12 +1,9 @@
 package com.android.test.tests;
 
 import com.android.test.AbstractTest;
-import com.android.test.BaseTest;
 import com.android.test.pages.RegisterPage;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-
-import java.time.LocalDateTime;
 
 public class RegisterTest extends AbstractTest {
     private RegisterPage registerPage;

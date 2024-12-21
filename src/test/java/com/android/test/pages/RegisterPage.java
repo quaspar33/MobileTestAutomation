@@ -5,15 +5,10 @@ import com.android.test.BaseTest;
 import com.android.test.JsonHandler;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.pagefactory.AndroidFindBy;
-import io.appium.java_client.pagefactory.AppiumFieldDecorator;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 public class RegisterPage extends AbstractPage {
     private JsonHandler jsonHandler;

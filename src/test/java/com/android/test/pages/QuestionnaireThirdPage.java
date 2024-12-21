@@ -1,7 +1,6 @@
 package com.android.test.pages;
 
 import com.android.test.AbstractPage;
-import com.android.test.MavenRunner;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.pagefactory.AndroidFindBy;
 import org.openqa.selenium.WebElement;

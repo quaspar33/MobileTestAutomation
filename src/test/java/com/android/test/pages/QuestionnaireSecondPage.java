@@ -3,7 +3,6 @@ package com.android.test.pages;
 import com.android.test.AbstractPage;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.pagefactory.AndroidFindBy;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
