@@ -143,9 +143,8 @@ public class QuestionnaireFirstPage extends AbstractPage {
 
     public void enterIban() {
         String ibanStr = apiHandler.GET("https://generator.avris.it/api/_/iban?country=PL");
-        wait.until(ExpectedConditions.visibilityOf(iban)).click();
         String ibanStrParsed = ibanStr.substring(3, ibanStr.length() - 1).replace(" ", "");
-        realTyping(ibanStrParsed);
+        copyFromClipboardIntoElement(iban, ibanStrParsed);
         slideFromElement(wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//android.widget.EditText[@text=\"" + ibanStrParsed + "\"]"))), 0, -500);
     }
 

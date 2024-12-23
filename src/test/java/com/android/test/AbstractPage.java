@@ -1,10 +1,12 @@
 package com.android.test;
 
+import io.appium.java_client.TouchAction;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.android.nativekey.AndroidKey;
 import io.appium.java_client.android.nativekey.KeyEvent;
 import io.appium.java_client.android.nativekey.KeyEventMetaModifier;
 import io.appium.java_client.pagefactory.AppiumFieldDecorator;
+import io.appium.java_client.touch.offset.PointOption;
 import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.interactions.PointerInput;
@@ -210,5 +212,19 @@ public abstract class AbstractPage {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    public void tapOutsideTheKeyboard() {
+        Dimension window = driver.manage().window().getSize();
+        new TouchAction(driver)
+                .tap(PointOption.point((int)(window.width * 0.9), (int)(window.height * 0.1)))
+                .perform();
+    }
+
+    public void copyFromClipboardIntoElement(WebElement element, String text) {
+        driver.setClipboardText(text);
+        element.click();
+        driver.pressKey(new KeyEvent(AndroidKey.PASTE));
+        tapOutsideTheKeyboard();
     }
 }
