@@ -38,8 +38,9 @@ public class LoginPage extends AbstractPage {
     public void denyAutomaticLogin() {
         try {
             wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//android.widget.Button[@resource-id=\"com.android.permissioncontroller:id/permission_deny_button\"] "))).click();
+            System.out.println("Udzielono zgody na wysyłanie wiadomości.");
         } catch (TimeoutException e) {
-            System.out.println("Prośba o udzielenie zgody na wysyłanie SMS nie pojawiła się.");
+            System.out.println("Prośba o udzielenie zgody na wysyłanie wiadomości nie pojawiła się.");
         }
     }
 
